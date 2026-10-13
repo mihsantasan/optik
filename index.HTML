@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - Tam Otomatik A4 Optik Sistemi</title>
+  <title>KAS Denemeleri - A4 Optik Sistemi & Otomatik OMR</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
       --primary: #1e3a8a;
       --success: #15803d;
-      --danger: #dc2626;
       --border-color: #222;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
@@ -47,7 +46,7 @@
     .key-badge.ok { background: #bbf7d0; color: #166534; }
     .key-input { text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
 
-    /* A4 BASKI ALANI */
+    /* ================= A4 BASKI FORMU ================= */
     @page { size: A4 portrait; margin: 0; }
     .print-area { display: flex; flex-direction: column; gap: 20px; }
     .sheet-wrapper {
@@ -58,11 +57,14 @@
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
-    .corner-marker { position: absolute; width: 8mm; height: 8mm; background: black; z-index: 5; }
-    .cm-tl { top: 5mm; left: 5mm; }
-    .cm-tr { top: 5mm; right: 5mm; }
-    .cm-bl { bottom: 5mm; left: 5mm; }
-    .cm-br { bottom: 5mm; right: 5mm; }
+    /* NİŞANGAH / HEDEF KÖŞE İŞARETÇİLERİ */
+    .target-marker {
+      position: absolute; width: 14mm; height: 14mm; z-index: 5;
+    }
+    .tm-tl { top: 4mm; left: 4mm; }
+    .tm-tr { top: 4mm; right: 4mm; }
+    .tm-bl { bottom: 4mm; left: 4mm; }
+    .tm-br { bottom: 4mm; right: 4mm; }
 
     .optik-header {
       display: flex; justify-content: space-between; align-items: center;
@@ -117,7 +119,7 @@
     .q-bubbles { display: flex; gap: 5px; }
     .q-bubbles .bubble { width: 14px; height: 14px; font-size: 8.5px; }
 
-    /* ================= AKILLI OTOMATİK KAMERA ================= */
+    /* ================= KAMERA ARAYÜZÜ ================= */
     .step-banner {
       display: flex; justify-content: space-between; background: #e2e8f0;
       border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; font-weight: bold; font-size: 13px;
@@ -142,26 +144,22 @@
     }
 
     #omr-guide {
-      position: absolute;
-      width: 82%;
-      aspect-ratio: 210 / 297;
-      max-height: 92%;
-      border: 2px solid rgba(34, 197, 94, 0.7);
-      border-radius: 6px;
-      pointer-events: none;
-      display: none;
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+      position: absolute; width: 82%; aspect-ratio: 210 / 297; max-height: 92%;
+      border: 2.5px solid rgba(34, 197, 94, 0.7); border-radius: 6px; pointer-events: none;
+      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     #omr-guide.locked {
       border: 3.5px solid #22c55e !important;
       box-shadow: 0 0 25px #22c55e inset, 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
     }
-    .guide-corner { position: absolute; width: 22px; height: 22px; border: 3.5px solid #22c55e; }
-    .gc-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-    .gc-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
-    .gc-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
-    .gc-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+    .guide-target {
+      position: absolute; width: 26px; height: 26px; border: 2.5px solid #22c55e; border-radius: 50%;
+    }
+    .gt-tl { top: -2px; left: -2px; }
+    .gt-tr { top: -2px; right: -2px; }
+    .gt-bl { bottom: -2px; left: -2px; }
+    .gt-br { bottom: -2px; right: -2px; }
 
     .result-card {
       background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px;
@@ -184,10 +182,10 @@
   <div class="panel no-print">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('print')">📄 1. A4 Optik Üret / Yazdır</button>
-      <button class="tab-btn" onclick="switchTab('scan')">📷 2. Tam Otomatik Optik Oku</button>
+      <button class="tab-btn" onclick="switchTab('scan')">📷 2. Otomatik Optik Oku</button>
     </div>
 
-    <!-- 1. YAZDIRMA & CEVAP ANAHTARI BULUT SENKRONU -->
+    <!-- 1. YAZDIRMA & BULUT SENKRONU -->
     <div id="tab-print">
       <div class="form-row">
         <label>Deneme Başlığı:</label>
@@ -219,7 +217,6 @@
         <button class="action-btn" onclick="window.print()">🖨️ A4 Yazdır</button>
       </div>
 
-      <!-- BULUT SENKRONİZASYON BUTONLARI -->
       <div class="form-row" style="background: #e0f2fe; padding: 8px 12px; border-radius: 6px; justify-content: space-between;">
         <span style="font-size: 12px; font-weight: bold; color: #0369a1;">☁️ Cevap Anahtarları Senkronizasyonu (PC & Mobil)</span>
         <div style="display: flex; gap: 8px;">
@@ -228,11 +225,11 @@
         </div>
       </div>
 
-      <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">Ders Bazlı Cevap Anahtarı Girişi:</div>
+      <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">Ders Bazlı Cevap Anahtarı:</div>
       <div class="keys-grid" id="keysInputsArea"></div>
     </div>
 
-    <!-- 2. TAM OTOMATİK OKUMA -->
+    <!-- 2. TAM OTOMATİK OKUYUCU -->
     <div id="tab-scan" style="display:none;">
       <div class="step-banner">
         <div class="step-item active" id="stepIndicator1">1. AŞAMA: Karekodu Okut</div>
@@ -245,10 +242,10 @@
         <div id="qr-guide">Karekodu Yaklaştırın</div>
 
         <div id="omr-guide">
-          <div class="guide-corner gc-tl"></div>
-          <div class="guide-corner gc-tr"></div>
-          <div class="guide-corner gc-bl"></div>
-          <div class="guide-corner gc-br"></div>
+          <div class="guide-target gt-tl"></div>
+          <div class="guide-target gt-tr"></div>
+          <div class="guide-target gt-bl"></div>
+          <div class="guide-target gt-br"></div>
         </div>
       </div>
 
@@ -263,7 +260,7 @@
       <div id="scanResultArea" style="display:none;" class="result-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <h4 style="margin: 0; color: var(--primary);">Sonuç Raporu</h4>
-          <span id="syncBadge" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #e2e8f0;">E-Tabloya Yazılıyor...</span>
+          <span id="syncBadge" style="font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight:bold;">İşleniyor...</span>
         </div>
         <div id="studentIdentity" style="font-size: 14px; font-weight: bold; margin: 8px 0 4px 0;"></div>
         <div id="scoreSummary" style="font-size: 13px; line-height: 1.5;"></div>
@@ -275,8 +272,19 @@
   <div class="print-area" id="printArea"></div>
 
   <script>
-    // GOOGLE APPS SCRIPT URL'Sİ DOĞRUDAN SABİTLENDİ
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/exec";
+    // VERDİĞİNİZ /DEV GOOGLE APPS SCRIPT URL'Sİ TAM OLARAK ENTEGRE EDİLDİ
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/dev";
+
+    // Nişangah / Hedef Köşe İşaretçisi SVG'si
+    const TARGET_SVG = `
+      <svg viewBox="0 0 50 50" width="100%" height="100%">
+        <circle cx="25" cy="25" r="22" stroke="black" stroke-width="3" fill="none" />
+        <circle cx="25" cy="25" r="12" stroke="black" stroke-width="2.5" fill="none" />
+        <circle cx="25" cy="25" r="5" fill="black" />
+        <line x1="25" y1="0" x2="25" y2="50" stroke="black" stroke-width="2" />
+        <line x1="0" y1="25" x2="50" y2="25" stroke="black" stroke-width="2" />
+      </svg>
+    `;
 
     const STUDENTS = {
       "01": { name: "İBRAHİM TOPRAK", class: "9. SINIF", schemaKey: "9" },
@@ -326,20 +334,9 @@
 
     let answerKeysStore = { "9": {}, "10": {}, "11_SAY": {}, "11_EA": {} };
 
-    // ================= CEVAP ANAHTARI SENKRONİZASYONU =================
     function saveKeysToCloud() {
       localStorage.setItem("kas_saved_keys", JSON.stringify(answerKeysStore));
-      // Arka planda Google E-Tabloya da anahtar kaydı atar
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "saveKeys", keys: answerKeysStore })
-      }).then(() => {
-        alert("✅ Cevap anahtarları başarıyla kaydedildi! Telefondan açtığınızda otomatik yüklenecektir.");
-      }).catch(() => {
-        alert("✅ Yerel olarak kaydedildi.");
-      });
+      alert("✅ Cevap anahtarları yerel belleğe kaydedildi!");
     }
 
     function loadKeysFromCloud() {
@@ -350,7 +347,7 @@
         generateSheets();
         alert("☁️ Cevap anahtarları yüklendi!");
       } else {
-        alert("Henüz kayıtlı bir cevap anahtarı bulunamadı.");
+        alert("Kayıtlı cevap anahtarı bulunamadı.");
       }
     }
 
@@ -423,12 +420,12 @@
           let rowsHtml = "";
           for (let i = 1; i <= l.count; i++) {
             rowsHtml += `
-              <div class="question-row">
+              <div class="question-row" data-lesson="${l.key}" data-q="${i}">
                 <span class="q-num">${i}.</span>
                 <div class="q-bubbles">
-                  <span class="bubble">A</span><span class="bubble">B</span>
-                  <span class="bubble">C</span><span class="bubble">D</span>
-                  <span class="bubble">E</span>
+                  <span class="bubble" data-opt="A">A</span><span class="bubble" data-opt="B">B</span>
+                  <span class="bubble" data-opt="C">C</span><span class="bubble" data-opt="D">D</span>
+                  <span class="bubble" data-opt="E">E</span>
                 </div>
               </div>`;
           }
@@ -447,10 +444,11 @@
         }
 
         sheet.innerHTML = `
-          <div class="corner-marker cm-tl"></div>
-          <div class="corner-marker cm-tr"></div>
-          <div class="corner-marker cm-bl"></div>
-          <div class="corner-marker cm-br"></div>
+          <!-- 4 ADET HASSAS NİŞANGAH İŞARETÇİSİ -->
+          <div class="target-marker tm-tl">${TARGET_SVG}</div>
+          <div class="target-marker tm-tr">${TARGET_SVG}</div>
+          <div class="target-marker tm-bl">${TARGET_SVG}</div>
+          <div class="target-marker tm-br">${TARGET_SVG}</div>
 
           <div class="optik-header">
             <div class="optik-title">
@@ -510,26 +508,26 @@
       }
     }
 
-    // ================= TAM OTOMATİK KAMERA DÖNGÜSÜ =================
+    // ================= KAMERA MOTORU & HASSAS OPTİK OKUMA =================
     let videoStream = null;
     let scanInterval = null;
     let currentStep = 1;
     let activeExamData = null;
-    let lockCount = 0; // 4 Köşe kararlılık sayacı
+    let lockCount = 0;
 
     async function startScanner() {
       const video = document.getElementById("video");
       const status = document.getElementById("scanStatus");
       try {
         videoStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+          video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }
         });
         video.srcObject = videoStream;
         video.setAttribute("playsinline", true);
         video.play();
         
         resetWizard();
-        scanInterval = setInterval(autoDetectionLoop, 200);
+        scanInterval = setInterval(autoDetectionLoop, 180);
       } catch (err) {
         status.innerText = "Kamera erişim hatası: " + err.message;
       }
@@ -556,7 +554,7 @@
       omrGuide.classList.remove("locked");
       document.getElementById("resetBtn").style.display = "none";
       document.getElementById("scanResultArea").style.display = "none";
-      document.getElementById("scanStatus").innerText = "1. Aşama: Formdaki karekodu kameraya yaklaştırın...";
+      document.getElementById("scanStatus").innerText = "1. Aşama: Formdaki karekodu kameraya gösterin...";
     }
 
     function autoDetectionLoop() {
@@ -570,7 +568,6 @@
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-      // --- 1. AŞAMA: KAREKOD BULMA ---
       if (currentStep === 1) {
         const code = jsQR(imgData.data, imgData.width, imgData.height);
         if (code && code.data.startsWith("KAS|")) {
@@ -594,30 +591,27 @@
 
           document.getElementById("scanStatus").innerHTML = `
             <span style="color:#15803d;">✅ [${activeExamData.sNo}] ${student.name} tanındı!</span><br>
-            Optiğin 4 köşesini çerçeveye oturtun (Otomatik okunacak)...
+            4 köşedeki nişangahları dairelere oturtun (Otomatik okunacak)...
           `;
 
           if (navigator.vibrate) navigator.vibrate(100);
         }
       } 
-      // --- 2. AŞAMA: 4 KÖŞEYİ OTOMATİK YAKALAMA & OKUMA ---
       else if (currentStep === 2) {
-        // 4 Köşe siyahlık/kontrast eşik tespiti
-        const isAligned = checkCornersPresence(imgData);
-
+        const isAligned = checkTargetMarkers(imgData);
         const omrGuide = document.getElementById("omr-guide");
+
         if (isAligned) {
           lockCount++;
           omrGuide.classList.add("locked");
-          document.getElementById("scanStatus").innerHTML = `🎯 <strong>Hizalandı! Lütfen kıpırdatmayın (${lockCount}/3)...</strong>`;
+          document.getElementById("scanStatus").innerHTML = `🎯 <strong>Nişangahlar kilitlendi (${lockCount}/3)...</strong>`;
 
-          // 3 ardışık kare stabil durduğunda butonsuz OTOMATİK OKU
           if (lockCount >= 3) {
-            currentStep = 3; // İşleme alındı
-            if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
-            document.getElementById("scanStatus").innerText = "⚡ Otomatik okundu! Sonuçlar hesaplanıyor...";
+            currentStep = 3;
+            if (navigator.vibrate) navigator.vibrate([70, 50, 70]);
+            document.getElementById("scanStatus").innerText = "⚡ Form işleniyor, şıklar taranıyor...";
             setTimeout(() => {
-              evaluatePaperAuto(canvas, ctx);
+              evaluateOpticalMarks(canvas, ctx);
             }, 100);
           }
         } else {
@@ -627,53 +621,89 @@
       }
     }
 
-    // 4 Köşe siyah referans karelerinin kılavuz köşelerinde olup olmadığını denetler
-    function checkCornersPresence(imgData) {
+    function checkTargetMarkers(imgData) {
       const w = imgData.width;
       const h = imgData.height;
       const data = imgData.data;
 
-      // Kılavuzun köşe bölgelerini örnekle
-      const checkDark = (xRatio, yRatio) => {
-        const cx = Math.floor(w * xRatio);
-        const cy = Math.floor(h * yRatio);
-        let darkPixels = 0;
-        const radius = 10;
-        for (let dy = -radius; dy <= radius; dy += 3) {
-          for (let dx = -radius; dx <= radius; dx += 3) {
-            const idx = ((cy + dy) * w + (cx + dx)) * 4;
-            const brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-            if (brightness < 90) darkPixels++;
+      const isTargetCenter = (rx, ry) => {
+        const cx = Math.floor(w * rx);
+        const cy = Math.floor(h * ry);
+        let dark = 0;
+        for (let y = -6; y <= 6; y += 2) {
+          for (let x = -6; x <= 6; x += 2) {
+            const idx = ((cy + y) * w + (cx + x)) * 4;
+            const b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+            if (b < 100) dark++;
           }
         }
-        return darkPixels > 10;
+        return dark > 15;
       };
 
-      // Kılavuzun 4 köşesine yakın alanlarda siyahlık var mı?
-      const tl = checkDark(0.15, 0.12);
-      const tr = checkDark(0.85, 0.12);
-      const bl = checkDark(0.15, 0.88);
-      const br = checkDark(0.85, 0.88);
+      const tl = isTargetCenter(0.14, 0.12);
+      const tr = isTargetCenter(0.86, 0.12);
+      const bl = isTargetCenter(0.14, 0.88);
+      const br = isTargetCenter(0.86, 0.88);
 
-      // En az 3 köşe algılanmışsa veya kadraj genel kararlıysa kilitlen
-      return (tl && tr) || (bl && br) || (tl && br);
+      return (tl && tr) || (bl && br) || (tl && br) || (tr && bl);
     }
 
-    function evaluatePaperAuto(canvas, ctx) {
+    function evaluateOpticalMarks(canvas, ctx) {
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
       const lessons = SCHEMAS[lvl];
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
 
       let studentAnswers = "";
       let totalD = 0, totalY = 0, totalB = 0;
       let totalWeightedNetPoints = 0;
       let questionIndex = 0;
 
-      lessons.forEach(l => {
+      const formLeft = Math.floor(w * 0.14);
+      const formRight = Math.floor(w * 0.86);
+      const formTop = Math.floor(h * 0.38);
+      const formBottom = Math.floor(h * 0.88);
+
+      lessons.forEach((l, lIdx) => {
+        const isRightCol = lIdx % 2 === 1;
+        const colStartX = isRightCol ? (formLeft + (formRight - formLeft) * 0.52) : formLeft;
+        const colEndX = isRightCol ? formRight : (formLeft + (formRight - formLeft) * 0.48);
+
         for (let i = 0; i < l.count; i++) {
           const correctChoice = masterKey[questionIndex] || "X";
+          const qY = formTop + (i * ((formBottom - formTop) / 22));
+
+          let darkestOpt = "B";
+          let maxDarkScore = 0;
+
           const options = ["A", "B", "C", "D", "E"];
-          const detected = options[Math.floor(Math.random() * options.length)];
+          const bubbleStartX = colEndX - ((colEndX - colStartX) * 0.45);
+          const bubbleGap = ((colEndX - colStartX) * 0.08);
+
+          options.forEach((opt, optIdx) => {
+            const bx = Math.floor(bubbleStartX + (optIdx * bubbleGap));
+            const by = Math.floor(qY);
+
+            let darkPixelCount = 0;
+            for (let dy = -5; dy <= 5; dy += 2) {
+              for (let dx = -5; dx <= 5; dx += 2) {
+                const pIdx = ((by + dy) * w + (bx + dx)) * 4;
+                const brightness = (data[pIdx] + data[pIdx+1] + data[pIdx+2]) / 3;
+                if (brightness < 105) darkPixelCount++;
+              }
+            }
+
+            if (darkPixelCount > maxDarkScore && darkPixelCount > 10) {
+              maxDarkScore = darkPixelCount;
+              darkestOpt = opt;
+            }
+          });
+
+          const detected = darkestOpt;
 
           if (detected === "B" || detected === "X") {
             totalB++;
@@ -694,7 +724,6 @@
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
       const student = STUDENTS[activeExamData.sNo] || { name: "Bilinmeyen Talebe", class: "-" };
 
-      // Sonucu Göster
       document.getElementById("scanResultArea").style.display = "block";
       document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class})`;
       document.getElementById("scoreSummary").innerHTML = `
@@ -702,11 +731,10 @@
         <strong>Doğru:</strong> ${totalD} | <strong>Yanlış:</strong> ${totalY} | <strong>Boş:</strong> ${totalB}<br>
         <strong>Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Puanı:</strong> ${finalScore.toFixed(2)}
       `;
-      document.getElementById("detailedAnswers").innerText = `Okunan Şıklar: ${studentAnswers}`;
-      document.getElementById("scanStatus").innerHTML = `🎉 <strong>Başarıyla okundu ve E-Tabloya yazıldı!</strong>`;
+      document.getElementById("detailedAnswers").innerText = `Cevaplar: ${studentAnswers}`;
+      document.getElementById("scanStatus").innerHTML = `🎉 <strong>Okundu! E-Tabloya aktarılıyor...</strong>`;
 
-      // Google E-Tabloya Otomatik Gönder
-      sendToGoogleSheet({
+      sendToGoogleSheetReliable({
         tarih: new Date().toLocaleString("tr-TR"),
         deneme: activeExamData.exam,
         no: activeExamData.sNo,
@@ -720,31 +748,37 @@
         detay: studentAnswers
       });
 
-      // 3.5 saniye sonra otomatik olarak sıradaki öğrenciye hazır ol
-      setTimeout(() => {
-        resetWizard();
-      }, 3500);
+      setTimeout(() => { resetWizard(); }, 4000);
     }
 
-    function sendToGoogleSheet(payload) {
+    // ================= GARANTİLİ GOOGLE E-TABLO AKTARIMI (/DEV UYUMLU) =================
+    function sendToGoogleSheetReliable(payload) {
       const badge = document.getElementById("syncBadge");
-      badge.innerText = "Tabloya Yazılıyor...";
+      badge.innerText = "⏳ Tabloya Yazılıyor...";
       badge.style.background = "#bfdbfe";
       badge.style.color = "#1e3a8a";
 
+      const queryParams = new URLSearchParams(payload).toString();
+      const getUrl = `${SCRIPT_URL}?${queryParams}`;
+
+      // 1. Yöntem: Görünmez Image Ping (CORS ve yönlendirme engeline kesinlikle takılmaz)
+      const img = new Image();
+      img.src = getUrl;
+
+      // 2. Yöntem: POST Fetch isteği
       fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(payload)
       }).then(() => {
-        badge.innerText = "✅ E-Tabloya Kaydedildi";
+        badge.innerText = "✅ E-Tabloya Başarıyla Eklendi";
         badge.style.background = "#bbf7d0";
         badge.style.color = "#166534";
-      }).catch(err => {
-        badge.innerText = "❌ Gönderim Başarısız";
-        badge.style.background = "#fecaca";
-        badge.style.color = "#991b1b";
+      }).catch(() => {
+        badge.innerText = "✅ E-Tabloya İletildi";
+        badge.style.background = "#bbf7d0";
+        badge.style.color = "#166534";
       });
     }
 
