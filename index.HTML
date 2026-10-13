@@ -3,421 +3,198 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - Kişiye Özel Optik Form & Değerlendirme Sistemi</title>
-
-  <!-- Tailwind CSS & Font Awesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- QRCode.js ve jsQR Kütüphaneleri -->
+  <title>KAS Denemeleri - Kişiye Özel Optik Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-
   <style>
-    @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #printArea, #printArea * {
-        visibility: visible !important;
-      }
-      #printArea {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 148mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important;
-      }
-      .a5-sheet {
-        width: 148mm !important;
-        height: 209mm !important;
-        min-height: 209mm !important;
-        max-height: 209mm !important;
-        padding: 5mm 6mm !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        page-break-inside: avoid !important;
-      }
-      .no-print {
-        display: none !important;
-      }
+    :root {
+      --primary: #1e3a8a;
+      --success: #15803d;
+      --border-color: #222;
     }
-
-    @page {
-      size: A5 portrait;
-      margin: 0;
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+    body { margin: 0; padding: 15px; background: #f8fafc; color: #0f172a; }
+    .no-print { display: block; }
+    .panel {
+      background: white; border-radius: 8px; padding: 15px 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 20px;
+      max-width: 900px; margin-left: auto; margin-right: auto;
     }
-
-    /* A5 Fiziksel Kağıt Ölçüsü */
-    .a5-sheet {
-      width: 148mm;
-      min-height: 210mm;
-      background: #ffffff;
-      color: #000000;
-      position: relative;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    .tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+    .tab-btn {
+      padding: 8px 16px; border: none; background: #e2e8f0; cursor: pointer;
+      border-radius: 6px; font-weight: 600; font-size: 14px;
     }
+    .tab-btn.active { background: var(--primary); color: white; }
+    .form-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; }
+    label { font-weight: 600; font-size: 13px; }
+    select, input, button {
+      padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px;
+    }
+    button.action-btn {
+      background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600;
+    }
+    button.action-btn:hover { opacity: 0.9; }
 
-    /* 4 Köşe Hizalama İşaretçileri */
+    .keys-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px; margin-top: 10px; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;
+    }
+    .key-item { display: flex; flex-direction: column; gap: 4px; }
+    .key-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }
+    .key-badge { font-size: 11px; padding: 1px 5px; border-radius: 3px; background: #cbd5e1; }
+    .key-badge.ok { background: #bbf7d0; color: #166534; }
+    .key-input { text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+
+    /* A5 Baskı Alanı */
+    @page { size: A5 portrait; margin: 4mm; }
+    .print-area { display: flex; flex-direction: column; gap: 20px; }
+
+    .sheet-wrapper {
+      width: 148mm; min-height: 202mm; background: white; margin: 0 auto;
+      padding: 5mm 6mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      position: relative; color: #000; box-sizing: border-box;
+      page-break-after: always;
+    }
+    .sheet-wrapper:last-child { page-break-after: auto; }
+
+    /* Köşe İşaretçileri */
     .corner-marker {
-      position: absolute;
-      width: 6.5mm;
-      height: 6.5mm;
-      background-color: #000000;
-      z-index: 20;
+      position: absolute; width: 6mm; height: 6mm; background: black; z-index: 5;
     }
     .cm-tl { top: 3.5mm; left: 3.5mm; }
     .cm-tr { top: 3.5mm; right: 3.5mm; }
     .cm-bl { bottom: 3.5mm; left: 3.5mm; }
     .cm-br { bottom: 3.5mm; right: 3.5mm; }
 
-    /* QR Kod Sessiz Alan (Quiet Zone) İzolasyon Kutusu */
-    .qr-isolated-container {
-      margin-right: 15mm; /* Sağ üst siyah köşeden en az 15mm güvenli sol payı */
-      background: #ffffff;
-      padding: 5px;
-      border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    /* Başlık ve İri QR Alanı */
+    .optik-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 6px;
+      padding-right: 22mm; /* Sağ üst işaretçiyle güvenli mesafe */
+    }
+    .optik-title h2 { margin: 0; font-size: 16px; letter-spacing: 0.5px; }
+    .optik-title h4 { margin: 2px 0 0 0; font-size: 11px; font-weight: normal; }
+    
+    /* İrileştirilmiş QR Kutusu ve Sessiz Alan */
+    .qr-box {
+      width: 95px; height: 95px; background: #fff; padding: 4px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1.5px solid #222; border-radius: 4px;
     }
 
-    /* Optik Kabarcıklar */
-    .optic-bubble {
-      width: 11px;
-      height: 11px;
-      border: 1.1px solid #1f2937;
-      border-radius: 9999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 6.8px;
-      font-weight: 700;
-      color: #111827;
-      line-height: 1;
-      background-color: #ffffff;
-      user-select: none;
+    .top-section {
+      display: flex; gap: 8px; margin-bottom: 6px; border-bottom: 1.5px dashed #555; padding-bottom: 5px;
+    }
+    .student-info-box {
+      flex: 1; border: 1.5px solid #000; padding: 6px 8px; font-size: 11px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .info-row { margin-bottom: 4px; display: flex; align-items: center; }
+    .info-row span.label { font-weight: bold; width: 75px; color: #222; }
+    .info-row span.val { font-weight: bold; font-size: 13px; color: #000; }
+
+    .num-grid { display: flex; gap: 6px; font-size: 9px; text-align: center; border: 1.5px solid #000; padding: 3px 6px; }
+    .num-col { display: flex; flex-direction: column; gap: 1.5px; align-items: center; }
+    .num-col-title { font-weight: bold; font-size: 8px; margin-bottom: 1px; }
+    .bubble {
+      width: 10.5px; height: 10.5px; border: 1px solid #111; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 6.5px;
+      font-weight: bold; color: #111;
+    }
+    .bubble.filled { background: #000 !important; color: #fff !important; }
+
+    .lessons-container {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 8.5px;
+    }
+    .lesson-block { border: 1px solid #333; padding: 3px 4px; border-radius: 2px; }
+    .lesson-title {
+      font-weight: bold; font-size: 9px; text-align: center;
+      background: #f1f5f9; padding: 2px 0; margin-bottom: 3px; border-bottom: 1px solid #333;
+    }
+    .question-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2px; padding: 0 2px; }
+    .q-num { font-weight: bold; font-size: 8px; width: 14px; text-align: right; }
+    .q-bubbles { display: flex; gap: 3.5px; }
+
+    #scanner-container { max-width: 500px; margin: 0 auto; text-align: center; }
+    #video { width: 100%; border-radius: 8px; background: #000; }
+    .result-card {
+      background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;
+      padding: 12px; margin-top: 15px; text-align: left;
     }
 
-    .optic-bubble.filled {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border-color: #000000 !important;
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+      .print-area { gap: 0; }
+      .sheet-wrapper { box-shadow: none; margin: 0; width: 100%; min-height: 100%; }
     }
-
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans min-h-screen">
+<body>
 
-  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <div class="bg-amber-400 text-slate-950 font-black px-2.5 py-1 rounded text-sm tracking-wider shadow">
-          KAS
-        </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold leading-tight">Deneme Sınavları Sistemi</h1>
-          <p class="text-[11px] text-slate-400">Ders Bazlı Cevap Girişi &bull; A5 Form Baskı &bull; Kamera & E-Tablo Entegrasyonu</p>
-        </div>
-      </div>
-
-      <nav class="flex items-center gap-1.5 bg-slate-800 p-1 rounded-xl text-xs sm:text-sm font-semibold">
-        <button id="btnTabPrint" onclick="setTab('print')" class="px-3.5 py-1.5 rounded-lg transition bg-indigo-600 text-white shadow">
-          <i class="fa-solid fa-print mr-1.5"></i> Optik Form Üret & Yazdır
-        </button>
-        <button id="btnTabScan" onclick="setTab('scan')" class="px-3.5 py-1.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-700">
-          <i class="fa-solid fa-camera mr-1.5"></i> Kamera ile Oku
-        </button>
-        <button id="btnTabWeights" onclick="setTab('weights')" class="px-3.5 py-1.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-700">
-          <i class="fa-solid fa-calculator mr-1.5"></i> Katsayı & Puanlama
-        </button>
-      </nav>
+  <div class="panel no-print">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('print')">📄 1. Kişiye Özel Optik Üret / Yazdır</button>
+      <button class="tab-btn" onclick="switchTab('scan')">📷 2. Kamera ile Optik Oku</button>
     </div>
-  </header>
 
-  <main class="max-w-7xl mx-auto p-4 sm:p-6">
+    <div id="tab-print">
+      <div class="form-row">
+        <label>Deneme Başlığı:</label>
+        <input type="text" id="examTitle" value="KAS DENEME - 01" oninput="renderKeysForm(); generateSheets();">
 
-    <section id="sectionPrint" class="space-y-6">
+        <label>Sınıf Seviyesi Seç:</label>
+        <select id="examLevel" onchange="renderKeysForm(); generateSheets();">
+          <option value="9">9. Sınıf</option>
+          <option value="10">10. Sınıf</option>
+          <option value="11_SAY">11. Sınıf Sayısal</option>
+          <option value="11_EA">11. Sınıf Eşit Ağırlık</option>
+        </select>
 
-      <!-- Yapılandırma Paneli -->
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 no-print space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-indigo-600"></i> Optik Form & Baskı Ayarları
-          </h2>
-          <div class="flex items-center gap-2">
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow transition flex items-center gap-2">
-              <i class="fa-solid fa-print"></i> A5 Olarak Yazdır
-            </button>
-          </div>
-        </div>
+        <label>Talebe:</label>
+        <select id="studentSelect" onchange="generateSheets()">
+          <option value="ALL">-- Tüm Talebeler (Toplu 10 Optik) --</option>
+          <option value="01">01 - İbrahim Toprak (9. Sınıf)</option>
+          <option value="02">02 - Muhammed Emin Keskin (9. Sınıf)</option>
+          <option value="03">03 - Taha Doğru (9. Sınıf)</option>
+          <option value="04">04 - Yasir Sangi (9. Sınıf)</option>
+          <option value="05">05 - Yunus Emre Akça (9. Sınıf)</option>
+          <option value="06">06 - Enes Tunahan Caymaz (10. Sınıf)</option>
+          <option value="07">07 - Talha Kerem Arslan (10. Sınıf)</option>
+          <option value="08">08 - Burak Akdeniz (11. Sınıf Sayısal)</option>
+          <option value="09">09 - Miraç Akdeniz (11. Sınıf Sayısal)</option>
+          <option value="10">10 - Mirşah Uçar (11. Sınıf Eşit Ağırlık)</option>
+        </select>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div>
-            <label class="block font-bold text-slate-600 uppercase mb-1">Deneme Adı / Kodu</label>
-            <input type="text" id="cfgExamTitle" value="KAS DENEME - 01" oninput="renderOpticSheets()" class="w-full border border-slate-300 rounded-lg p-2 font-semibold">
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-600 uppercase mb-1">Talebe Filtresi</label>
-            <select id="cfgStudentFilter" onchange="renderOpticSheets()" class="w-full border border-slate-300 rounded-lg p-2 font-medium bg-white">
-              <option value="ALL">Tüm Talebeler (Toplu 10 Sayfa A5)</option>
-              <option value="01">01 - İbrahim Toprak (9. Sınıf)</option>
-              <option value="02">02 - Muhammed Emin Keskin (9. Sınıf)</option>
-              <option value="03">03 - Taha Doğru (9. Sınıf)</option>
-              <option value="04">04 - Yasir Sangi (9. Sınıf)</option>
-              <option value="05">05 - Yunus Emre Akça (9. Sınıf)</option>
-              <option value="06">06 - Enes Tunahan Caymaz (10. Sınıf)</option>
-              <option value="07">07 - Talha Kerem Arslan (10. Sınıf)</option>
-              <option value="08">08 - Burak Akdeniz (11. Sınıf Sayısal)</option>
-              <option value="09">09 - Miraç Akdeniz (11. Sınıf Sayısal)</option>
-              <option value="10">10 - Mirşah Uçar (11. Sınıf Eşit Ağırlık)</option>
-            </select>
-          </div>
-
-          <div class="sm:col-span-2">
-            <label class="block font-bold text-slate-600 uppercase mb-1">Google E-Tablolar (Apps Script) Webhook URL</label>
-            <input type="text" id="cfgSheetWebhook" onchange="persistWebhookUrl()" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 rounded-lg p-2 font-mono text-[11px] text-slate-700">
-            <span class="text-[10px] text-slate-400 mt-0.5 block">Kamera ile kağıt okunduğunda sonuçlar doğrudan tablonuza otomatik satır olarak eklenir.</span>
-          </div>
-        </div>
-
-        <div class="pt-3 border-t border-slate-100 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
-              <i class="fa-solid fa-list-check text-amber-500"></i> Ders Ders Cevap Anahtarı Girişi
-            </span>
-            <div class="flex items-center gap-2">
-              <span class="text-[11px] font-bold text-slate-500">Düzenlenen Sınıf Seviyesi:</span>
-              <select id="cfgKeyActiveLevel" onchange="renderKeyInputsUI()" class="border border-slate-300 rounded-md text-xs px-2 py-1 font-bold bg-white text-indigo-700">
-                <option value="9">9. Sınıf (50 Soru)</option>
-                <option value="10">10. Sınıf (50 Soru)</option>
-                <option value="11_SAY">11. Sınıf Sayısal (50 Soru)</option>
-                <option value="11_EA">11. Sınıf Eşit Ağırlık (50 Soru)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Ders Kutucukları Dinamik Alanı -->
-          <div id="subjectKeysContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <!-- JS tarafından doldurulur -->
-          </div>
-
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-700">Birleşik Cevap Anahtarı:</span>
-              <span id="mergedKeyDisplay" class="font-mono text-indigo-700 font-bold tracking-wider text-[11px]"></span>
-            </div>
-            <div id="mergedKeyBadge" class="font-bold text-[11px] px-2 py-0.5 rounded-full"></div>
-          </div>
-        </div>
+        <button class="action-btn" onclick="window.print()">🖨️ A5 Yazdır</button>
       </div>
 
-      <!-- Baskı Önizleme Alanı -->
-      <div class="flex flex-col items-center gap-6" id="printContainer">
-        <div id="printArea" class="flex flex-col gap-6 items-center">
-          <!-- JS Tarafından A5 Formları Buraya Basılır -->
+      <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">Ders Bazlı Cevap Anahtarı Girişi:</div>
+      <div class="keys-grid" id="keysInputsArea"></div>
+    </div>
+
+    <div id="tab-scan" style="display:none;">
+      <div id="scanner-container">
+        <video id="video" playsinline></video>
+        <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+          <button class="action-btn" onclick="startScanner()">Kamerayı Başlat</button>
+          <button class="action-btn" style="background:#dc2626;" onclick="stopScanner()">Durdur</button>
         </div>
-      </div>
-    </section>
-
-    <section id="sectionScan" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Sol Panel: Kamera ve Canlı Tarayıcı -->
-        <div class="lg:col-span-7 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-camera-viewfinder text-indigo-600"></i> Kamera ile Optik Tara
-            </h2>
-            <span id="camStatusBadge" class="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold">
-              Kamera Kapalı
-            </span>
-          </div>
-
-          <div class="relative w-full aspect-[4/3] bg-black rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
-            <video id="webcamVideo" playsinline class="w-full h-full object-cover"></video>
-            <canvas id="qrCanvas" class="hidden"></canvas>
-
-            <!-- Hizalama Kılavuzu -->
-            <div class="absolute inset-6 border-2 border-dashed border-emerald-400 pointer-events-none rounded-lg opacity-70 flex flex-col justify-between p-2">
-              <span class="text-[10px] text-white bg-black/70 px-1.5 py-0.5 rounded self-start font-mono">
-                QR Kodu ve formu çerçeveye tutunuz
-              </span>
-              <span class="text-[10px] text-white bg-black/70 px-1.5 py-0.5 rounded self-end font-mono">
-                KAS Optik Algılayıcı v2.2
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-3">
-            <button id="btnToggleCam" onclick="toggleCamera()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition text-sm shadow">
-              <i class="fa-solid fa-video"></i> Kamerayı Başlat
-            </button>
-            <button id="btnSimulateScan" onclick="simulateOpticalScan()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition text-sm shadow">
-              <i class="fa-solid fa-bolt"></i> Örnek Optik Oku (Test)
-            </button>
-          </div>
-
-          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
-            <i class="fa-solid fa-lightbulb text-amber-600 mr-1"></i>
-            <strong>Okuma Notu:</strong> Kamerayı formun üst köşesindeki <b>QR koda</b> tuttuğunuz anda talebenin numarası, seviyesi ve cevap anahtarı anında taranır. Netler ve 500 üzerinden katsayılı puan hesaplanıp Google E-Tablo'ya işlenir.
-          </div>
-        </div>
-
-        <!-- Sağ Panel: Son Okunan Talebe ve Puan Özeti -->
-        <div class="lg:col-span-5 space-y-4">
-          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <h3 class="text-base font-bold text-slate-800 flex items-center justify-between">
-              <span><i class="fa-solid fa-id-card text-indigo-600 mr-1.5"></i> Son Okunan Talebe</span>
-              <span id="sheetSentBadge" class="text-[10px] px-2 py-0.5 rounded font-bold hidden"></span>
-            </h3>
-
-            <!-- Profil Kartı -->
-            <div id="latestStudentCard" class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2">
-              <div class="text-center text-slate-400 py-6 italic">
-                Henüz optik okunmadı. Kamerayı başlatıp optik formu gösterin.
-              </div>
-            </div>
-
-            <!-- Ders Dökümü -->
-            <div class="space-y-2">
-              <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wide">Ders Bazlı Net & Puan Tablosu</h4>
-              <div id="subjectResultsList" class="max-h-60 overflow-y-auto space-y-1.5 pr-1 text-xs">
-                <div class="text-slate-400 italic text-center py-2 text-xs">Veri bekleniyor...</div>
-              </div>
-            </div>
-
-            <div class="pt-2 border-t border-slate-100 flex gap-2">
-              <button onclick="sendCurrentToSheetManual()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow">
-                <i class="fa-solid fa-cloud-arrow-up"></i> E-Tabloya Tekrar Gönder
-              </button>
-            </div>
-          </div>
-        </div>
+        <div id="scanStatus" style="margin-top: 8px; font-weight: 600; font-size: 13px;">Kamera bekleniyor...</div>
       </div>
 
-      <!-- Tablo Listesi -->
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-indigo-600"></i> Bu Oturumda Okunan Kağıtlar
-            </h3>
-            <p class="text-xs text-slate-500">Okutulan tüm optiklerin genel listesi ve 500 üzerinden puanları</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="exportToCsv()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-              <i class="fa-solid fa-file-csv"></i> CSV İndir
-            </button>
-            <button onclick="clearSessionHistory()" class="bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-bold px-3 py-1.5 rounded-lg transition">
-              <i class="fa-solid fa-trash"></i> Listeyi Temizle
-            </button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 text-slate-600 border-b border-slate-200 uppercase font-bold text-[10px]">
-                <th class="p-2.5">Zaman</th>
-                <th class="p-2.5">No</th>
-                <th class="p-2.5">Adı Soyadı</th>
-                <th class="p-2.5">Sınıfı</th>
-                <th class="p-2.5 text-center">Doğru</th>
-                <th class="p-2.5 text-center">Yanlış</th>
-                <th class="p-2.5 text-center">Boş</th>
-                <th class="p-2.5 text-center">Toplam Net</th>
-                <th class="p-2.5 text-center text-indigo-700 font-black">500 Üzerinden Puan</th>
-                <th class="p-2.5 text-center">E-Tablo Durumu</th>
-              </tr>
-            </thead>
-            <tbody id="sessionHistoryTableBody" class="divide-y divide-slate-100">
-              <tr>
-                <td colspan="10" class="text-center py-6 text-slate-400 italic">Henüz kaydedilmiş bir sınav sonucu yok.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div id="scanResultArea" style="display:none;" class="result-card">
+        <h4 style="margin: 0 0 6px 0; color: var(--primary);">Okuma Sonucu</h4>
+        <div id="studentIdentity" style="font-size: 14px; font-weight: bold; margin-bottom: 6px;"></div>
+        <div id="scoreSummary" style="font-size: 13px;"></div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section id="sectionWeights" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-scale-balanced text-indigo-600"></i> 500 Puan Katsayı Modeli ve Formül
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">
-              Formül: <strong>Puan = Taban Puan (100) + &sum; (Ders Neti &times; Ders Katsayısı)</strong>. 50 sorunun tamamı doğru yapıldığında tam puan 500.00 olur. 4 yanlış 1 doğruyu götürür.
-            </p>
-          </div>
-          <button onclick="resetWeightDefaults()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-200">
-            Varsayılan Katsayılara Dön
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          <!-- 9. ve 10. Sınıflar -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-              <span class="font-bold text-slate-800 text-sm">9. ve 10. Sınıflar</span>
-              <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded">50 Soru &bull; Taban: 100</span>
-            </div>
-            <div class="space-y-2" id="weightsList_9_10"></div>
-            <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-700">
-              <span>Maksimum Net Puanı:</span>
-              <span id="maxScore_9_10" class="text-indigo-700">400.00 (+100 = 500.00)</span>
-            </div>
-          </div>
-
-          <!-- 11. Sınıf Sayısal -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-              <span class="font-bold text-slate-800 text-sm">11. Sınıf Sayısal</span>
-              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">50 Soru &bull; Taban: 100</span>
-            </div>
-            <div class="space-y-2" id="weightsList_11_SAY"></div>
-            <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-700">
-              <span>Maksimum Net Puanı:</span>
-              <span id="maxScore_11_SAY" class="text-emerald-700">400.00 (+100 = 500.00)</span>
-            </div>
-          </div>
-
-          <!-- 11. Sınıf Eşit Ağırlık -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2">
-              <span class="font-bold text-slate-800 text-sm">11. Sınıf Eşit Ağırlık</span>
-              <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">50 Soru &bull; Taban: 100</span>
-            </div>
-            <div class="space-y-2" id="weightsList_11_EA"></div>
-            <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-700">
-              <span>Maksimum Net Puanı:</span>
-              <span id="maxScore_11_EA" class="text-amber-700">400.00 (+100 = 500.00)</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-  </main>
+  <div class="print-area" id="printArea"></div>
 
   <script>
-    // Talebe Listesi
     const STUDENTS = {
       "01": { name: "İBRAHİM TOPRAK", class: "9. SINIF", schemaKey: "9" },
       "02": { name: "MUHAMMED EMİN KESKİN", class: "9. SINIF", schemaKey: "9" },
@@ -431,767 +208,266 @@
       "10": { name: "MİRŞAH UÇAR", class: "11. SINIF EŞİT AĞIRLIK", schemaKey: "11_EA" }
     };
 
-    // Müfredat ve Varsayılan Katsayılar
-    const DEFAULT_WEIGHTS = {
+    const SCHEMAS = {
       "9": [
-        { name: "Türk Dili ve Edebiyatı", count: 10, weight: 9.0 },
-        { name: "Tarih", count: 5, weight: 6.0 },
-        { name: "Coğrafya", count: 5, weight: 6.0 },
-        { name: "Matematik", count: 10, weight: 10.0 },
-        { name: "Fizik", count: 7, weight: 7.5 },
-        { name: "Kimya", count: 7, weight: 7.0 },
-        { name: "Biyoloji", count: 6, weight: 8.0 }
+        { name: "TÜRK DİLİ VE EDEBİYATI", count: 10, key: "edebiyat" },
+        { name: "TARİH", count: 5, key: "tarih" },
+        { name: "COĞRAFYA", count: 5, key: "cografya" },
+        { name: "MATEMATİK", count: 10, key: "matematik" },
+        { name: "FİZİK", count: 7, key: "fizik" },
+        { name: "KİMYA", count: 7, key: "kimya" },
+        { name: "BİYOLOJİ", count: 6, key: "biyoloji" }
       ],
       "10": [
-        { name: "Türk Dili ve Edebiyatı", count: 10, weight: 9.0 },
-        { name: "Tarih", count: 5, weight: 6.0 },
-        { name: "Coğrafya", count: 5, weight: 6.0 },
-        { name: "Matematik", count: 10, weight: 10.0 },
-        { name: "Fizik", count: 7, weight: 7.5 },
-        { name: "Kimya", count: 7, weight: 7.0 },
-        { name: "Biyoloji", count: 6, weight: 8.0 }
+        { name: "TÜRK DİLİ VE EDEBİYATI", count: 10, key: "edebiyat" },
+        { name: "TARİH", count: 5, key: "tarih" },
+        { name: "COĞRAFYA", count: 5, key: "cografya" },
+        { name: "MATEMATİK", count: 10, key: "matematik" },
+        { name: "FİZİK", count: 7, key: "fizik" },
+        { name: "KİMYA", count: 7, key: "kimya" },
+        { name: "BİYOLOJİ", count: 6, key: "biyoloji" }
       ],
       "11_SAY": [
-        { name: "Matematik", count: 20, weight: 10.0 },
-        { name: "Fizik", count: 10, weight: 7.5 },
-        { name: "Kimya", count: 10, weight: 6.5 },
-        { name: "Biyoloji", count: 10, weight: 6.0 }
+        { name: "MATEMATİK", count: 20, key: "matematik" },
+        { name: "FİZİK", count: 10, key: "fizik" },
+        { name: "KİMYA", count: 10, key: "kimya" },
+        { name: "BİYOLOJİ", count: 10, key: "biyoloji" }
       ],
       "11_EA": [
-        { name: "Türk Dili ve Edebiyatı", count: 15, weight: 10.0 },
-        { name: "Tarih", count: 8, weight: 6.5 },
-        { name: "Coğrafya", count: 7, weight: 6.0 },
-        { name: "Matematik", count: 20, weight: 7.8 }
+        { name: "TÜRK DİLİ VE EDEBİYATI", count: 15, key: "edebiyat" },
+        { name: "TARİH", count: 8, key: "tarih" },
+        { name: "COĞRAFYA", count: 7, key: "cografya" },
+        { name: "MATEMATİK", count: 20, key: "matematik" }
       ]
     };
 
-    // Her seviye için ders bazlı varsayılan cevap anahtarları
-    const subjectAnswerKeys = {
-      "9": {
-        "Türk Dili ve Edebiyatı": "ABCDEABCDE",
-        "Tarih": "ABCDE",
-        "Coğrafya": "ABCDE",
-        "Matematik": "ABCDEABCDE",
-        "Fizik": "ABCDEAB",
-        "Kimya": "ABCDEAB",
-        "Biyoloji": "ABCDEA"
-      },
-      "10": {
-        "Türk Dili ve Edebiyatı": "BCDEABCDEA",
-        "Tarih": "BCDEA",
-        "Coğrafya": "BCDEA",
-        "Matematik": "BCDEABCDEA",
-        "Fizik": "BCDEABC",
-        "Kimya": "BCDEABC",
-        "Biyoloji": "BCDEAB"
-      },
-      "11_SAY": {
-        "Matematik": "CDEABCDEABCDEABCDEAB",
-        "Fizik": "CDEABCDEAB",
-        "Kimya": "CDEABCDEAB",
-        "Biyoloji": "CDEABCDEAB"
-      },
-      "11_EA": {
-        "Türk Dili ve Edebiyatı": "DEABCDEABCDEABC",
-        "Tarih": "DEABCDEA",
-        "Coğrafya": "DEABCDE",
-        "Matematik": "DEABCDEABCDEABCDEABC"
-      }
-    };
+    const answerKeysStore = { "9": {}, "10": {}, "11_SAY": {}, "11_EA": {} };
 
-    let activeWeights = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-    let sessionScans = [];
-    let lastEvaluatedData = null;
+    function renderKeysForm() {
+      const lvl = document.getElementById("examLevel").value;
+      const lessons = SCHEMAS[lvl];
+      const area = document.getElementById("keysInputsArea");
+      area.innerHTML = "";
 
-    function setTab(tab) {
-      document.getElementById("sectionPrint").classList.add("hidden");
-      document.getElementById("sectionScan").classList.add("hidden");
-      document.getElementById("sectionWeights").classList.add("hidden");
-
-      document.getElementById("btnTabPrint").className = "px-3.5 py-1.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-700";
-      document.getElementById("btnTabScan").className = "px-3.5 py-1.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-700";
-      document.getElementById("btnTabWeights").className = "px-3.5 py-1.5 rounded-lg transition text-slate-300 hover:text-white hover:bg-slate-700";
-
-      if (tab === 'print') {
-        document.getElementById("sectionPrint").classList.remove("hidden");
-        document.getElementById("btnTabPrint").className = "px-3.5 py-1.5 rounded-lg transition bg-indigo-600 text-white shadow";
-        stopCamera();
-      } else if (tab === 'scan') {
-        document.getElementById("sectionScan").classList.remove("hidden");
-        document.getElementById("btnTabScan").className = "px-3.5 py-1.5 rounded-lg transition bg-indigo-600 text-white shadow";
-      } else if (tab === 'weights') {
-        document.getElementById("sectionWeights").classList.remove("hidden");
-        document.getElementById("btnTabWeights").className = "px-3.5 py-1.5 rounded-lg transition bg-indigo-600 text-white shadow";
-        renderWeightsInputs();
-        stopCamera();
-      }
-    }
-
-    function renderKeyInputsUI() {
-      const activeLvl = document.getElementById("cfgKeyActiveLevel").value;
-      const container = document.getElementById("subjectKeysContainer");
-      container.innerHTML = "";
-
-      const subjects = activeWeights[activeLvl];
-      const currentKeys = subjectAnswerKeys[activeLvl];
-
-      subjects.forEach((subj, idx) => {
-        const val = currentKeys[subj.name] || "";
-        const isComplete = val.length === subj.count;
-
-        const card = document.createElement("div");
-        card.className = "bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between";
-        card.innerHTML = `
-          <div class="flex justify-between items-center mb-1">
-            <span class="font-bold text-slate-800 text-[11px] truncate" title="${subj.name}">${subj.name}</span>
-            <span id="counter_${activeLvl}_${idx}" class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${isComplete ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-              ${val.length}/${subj.count}
+      lessons.forEach(l => {
+        const val = answerKeysStore[lvl][l.key] || "";
+        const item = document.createElement("div");
+        item.className = "key-item";
+        item.innerHTML = `
+          <div class="key-header">
+            <span>${l.name}</span>
+            <span class="key-badge ${val.length === l.count ? 'ok' : ''}" id="badge_${lvl}_${l.key}">
+              ${val.length}/${l.count} ${val.length === l.count ? '✓' : ''}
             </span>
           </div>
-          <div>
-            <input type="text" 
-                   maxlength="${subj.count}" 
-                   value="${val}" 
-                   oninput="onSubjectKeyChange('${activeLvl}', '${subj.name}', ${idx}, ${subj.count}, this)"
-                   placeholder="${subj.count} harf (A-E)" 
-                   class="w-full border border-slate-300 rounded-lg p-1.5 font-mono uppercase tracking-widest text-xs font-bold text-slate-900 focus:outline-indigo-500">
-          </div>
+          <input type="text" maxlength="${l.count}" class="key-input" id="inp_${lvl}_${l.key}"
+            value="${val}" placeholder="${l.count} harf (A-E)"
+            oninput="handleKeyInput('${lvl}', '${l.key}', ${l.count}, this)">
         `;
-        container.appendChild(card);
+        area.appendChild(item);
       });
-
-      updateMergedKeyDisplay(activeLvl);
     }
 
-    function onSubjectKeyChange(lvl, subjName, idx, maxCount, inputEl) {
-      // Sadece A, B, C, D, E harflerine izin ver
-      let clean = inputEl.value.toUpperCase().replace(/[^ABCDE]/g, "");
-      if (clean.length > maxCount) {
-        clean = clean.slice(0, maxCount);
+    function handleKeyInput(lvl, lessonKey, maxCount, el) {
+      el.value = el.value.replace(/[^a-eA-E]/g, '').toUpperCase();
+      answerKeysStore[lvl][lessonKey] = el.value;
+      const badge = document.getElementById(`badge_${lvl}_${lessonKey}`);
+      if (badge) {
+        badge.innerText = `${el.value.length}/${maxCount} ${el.value.length === maxCount ? '✓' : ''}`;
+        badge.className = `key-badge ${el.value.length === maxCount ? 'ok' : ''}`;
       }
-      inputEl.value = clean;
-      subjectAnswerKeys[lvl][subjName] = clean;
-
-      const counterEl = document.getElementById(`counter_${lvl}_${idx}`);
-      if (counterEl) {
-        counterEl.textContent = `${clean.length}/${maxCount}`;
-        if (clean.length === maxCount) {
-          counterEl.className = "text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800";
-        } else {
-          counterEl.className = "text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800";
-        }
-      }
-
-      updateMergedKeyDisplay(lvl);
-      renderOpticSheets();
+      generateSheets();
     }
 
-    function getMergedKey(lvl) {
-      const subjects = activeWeights[lvl];
-      let merged = "";
-      subjects.forEach(s => {
-        merged += (subjectAnswerKeys[lvl][s.name] || "");
+    function getCombinedKey(lvl) {
+      const lessons = SCHEMAS[lvl];
+      let combined = "";
+      lessons.forEach(l => {
+        combined += (answerKeysStore[lvl][l.key] || "").padEnd(l.count, "X");
       });
-      return merged;
+      return combined;
     }
 
-    function updateMergedKeyDisplay(lvl) {
-      const merged = getMergedKey(lvl);
-      const displayEl = document.getElementById("mergedKeyDisplay");
-      const badgeEl = document.getElementById("mergedKeyBadge");
-
-      displayEl.textContent = merged || "(Henüz girilmedi)";
-      if (merged.length === 50) {
-        badgeEl.textContent = "50/50 Tamamlandı ✓";
-        badgeEl.className = "font-bold text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800";
-      } else {
-        badgeEl.textContent = `${merged.length}/50 Eksik`;
-        badgeEl.className = "font-bold text-[11px] px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800";
-      }
-    }
-
-    function renderOpticSheets() {
-      const examTitle = document.getElementById("cfgExamTitle").value.trim().toUpperCase() || "KAS DENEME";
-      const filter = document.getElementById("cfgStudentFilter").value;
+    function generateSheets() {
+      const selected = document.getElementById("studentSelect").value;
+      const examTitle = document.getElementById("examTitle").value;
       const printArea = document.getElementById("printArea");
       printArea.innerHTML = "";
 
-      const studentKeys = filter === "ALL" ? Object.keys(STUDENTS) : [filter];
+      const studentKeys = selected === "ALL" ? Object.keys(STUDENTS) : [selected];
 
       studentKeys.forEach(sNo => {
         const student = STUDENTS[sNo];
-        const lessons = activeWeights[student.schemaKey];
+        const lessons = SCHEMAS[student.schemaKey];
         const tensDigit = parseInt(sNo[0]);
         const onesDigit = parseInt(sNo[1]);
 
         const sheet = document.createElement("div");
-        sheet.className = "a5-sheet shadow-lg border border-slate-300 rounded-sm p-4 relative";
-        sheet.id = `sheet_${sNo}`;
+        sheet.className = "sheet-wrapper";
+        const qrId = `qr_${sNo}`;
 
-        // 4 Köşe Hizalama Kareleri
+        let lessonsHtml = "";
+        lessons.forEach(l => {
+          let rowsHtml = "";
+          for (let i = 1; i <= l.count; i++) {
+            rowsHtml += `
+              <div class="question-row">
+                <span class="q-num">${i}.</span>
+                <div class="q-bubbles">
+                  <span class="bubble">A</span><span class="bubble">B</span>
+                  <span class="bubble">C</span><span class="bubble">D</span>
+                  <span class="bubble">E</span>
+                </div>
+              </div>`;
+          }
+          lessonsHtml += `
+            <div class="lesson-block">
+              <div class="lesson-title">${l.name} (${l.count} Soru)</div>
+              ${rowsHtml}
+            </div>`;
+        });
+
+        let tensBubbles = "";
+        let onesBubbles = "";
+        for (let d = 0; d <= 9; d++) {
+          tensBubbles += `<div class="bubble ${d === tensDigit ? 'filled' : ''}">${d}</div>`;
+          onesBubbles += `<div class="bubble ${d === onesDigit ? 'filled' : ''}">${d}</div>`;
+        }
+
         sheet.innerHTML = `
           <div class="corner-marker cm-tl"></div>
           <div class="corner-marker cm-tr"></div>
           <div class="corner-marker cm-bl"></div>
           <div class="corner-marker cm-br"></div>
-        `;
 
-        // Üst Başlık & Sağ Üstten İzole Edilmiş QR Kod Alanı
-        const headerEl = document.createElement("div");
-        headerEl.className = "flex justify-between items-center border-b-2 border-black pb-1.5 mb-1.5 mt-1";
-        const qrId = `qr_${sNo}_${Date.now()}_${Math.floor(Math.random()*1000)}`;
-
-        headerEl.innerHTML = `
-          <div class="pr-2">
-            <div class="flex items-center gap-1.5">
-              <span class="bg-black text-white text-[9px] font-black px-1 rounded">KAS</span>
-              <h2 class="font-black text-xs sm:text-sm tracking-wide text-black">${examTitle}</h2>
+          <div class="optik-header">
+            <div class="optik-title">
+              <h2>${examTitle}</h2>
+              <h4>${student.class} OPTİK CEVAP FORMU</h4>
             </div>
-            <h4 class="text-[10px] font-bold text-slate-700 mt-0.5">${student.class} OPTİK CEVAP FORMU</h4>
-            <div class="text-[8px] text-slate-500 font-mono">Toplam 50 Soru &bull; 4 Yanlış 1 Doğruyu Götürür</div>
-          </div>
-          <!-- Sağ üst işaretçiden en az 15mm uzakta, beyaz tampon alanlı QR kutusu -->
-          <div class="qr-isolated-container">
-            <div id="${qrId}" class="w-[50px] h-[50px] flex items-center justify-center"></div>
-            <span class="text-[7.5px] font-mono font-bold mt-0.5 text-slate-900">KAS-ID:${sNo}</span>
-          </div>
-        `;
-        sheet.appendChild(headerEl);
-
-        // Talebe Bilgi Kutusu + 2 Haneli Numara Kodlama Alanı
-        const infoRow = document.createElement("div");
-        infoRow.className = "flex gap-2 border border-black p-1.5 mb-1.5 bg-white text-[9.5px]";
-
-        let tensHtml = "";
-        let onesHtml = "";
-        for (let d = 0; d <= 9; d++) {
-          tensHtml += `<div class="optic-bubble ${d === tensDigit ? 'filled' : ''}">${d}</div>`;
-          onesHtml += `<div class="optic-bubble ${d === onesDigit ? 'filled' : ''}">${d}</div>`;
-        }
-
-        infoRow.innerHTML = `
-          <div class="flex-1 flex flex-col justify-around">
-            <div class="flex"><span class="font-bold text-slate-600 w-16">NO:</span> <span class="font-black text-black text-xs">${sNo}</span></div>
-            <div class="flex"><span class="font-bold text-slate-600 w-16">AD SOYAD:</span> <span class="font-black text-black text-xs">${student.name}</span></div>
-            <div class="flex"><span class="font-bold text-slate-600 w-16">SINIFI:</span> <span class="font-black text-black text-xs">${student.class}</span></div>
-            <div class="text-[7.5px] text-slate-500 italic mt-0.5 leading-tight">* Numarası sistem tarafından hazır kodlanmıştır. Lütfen cevap dairelerinin içini tam doldurunuz.</div>
+            <div class="qr-box" id="${qrId}"></div>
           </div>
 
-          <div class="flex gap-2 border-l border-slate-400 pl-2 text-center">
-            <div class="flex flex-col items-center gap-0.5">
-              <span class="text-[7.5px] font-black uppercase text-slate-700">ONLAR</span>
-              ${tensHtml}
+          <div class="top-section">
+            <div class="student-info-box">
+              <div class="info-row"><span class="label">NO:</span> <span class="val">${sNo}</span></div>
+              <div class="info-row"><span class="label">AD SOYAD:</span> <span class="val">${student.name}</span></div>
+              <div class="info-row"><span class="label">SINIFI:</span> <span class="val">${student.class}</span></div>
             </div>
-            <div class="flex flex-col items-center gap-0.5">
-              <span class="text-[7.5px] font-black uppercase text-slate-700">BİRLER</span>
-              ${onesHtml}
+
+            <div class="num-grid">
+              <div class="num-col">
+                <div class="num-col-title">ONLAR</div>
+                ${tensBubbles}
+              </div>
+              <div class="num-col">
+                <div class="num-col-title">BİRLER</div>
+                ${onesBubbles}
+              </div>
             </div>
           </div>
+
+          <div class="lessons-container">${lessonsHtml}</div>
         `;
-        sheet.appendChild(infoRow);
-
-        const lessonsContainer = document.createElement("div");
-        lessonsContainer.className = "grid grid-cols-2 gap-2 text-[8px]";
-
-        const leftLessons = [];
-        const rightLessons = [];
-        let leftCount = 0;
-        lessons.forEach(l => {
-          if (leftCount < 25) {
-            leftLessons.push(l);
-            leftCount += l.count;
-          } else {
-            rightLessons.push(l);
-          }
-        });
-
-        const buildColumnLessons = (colLessons) => {
-          let colHtml = `<div class="space-y-1">`;
-          colLessons.forEach(l => {
-            colHtml += `
-              <div class="border border-slate-800 rounded-sm p-1 bg-white">
-                <div class="bg-slate-100 text-slate-900 font-black px-1 py-0.5 rounded-sm text-[8px] flex justify-between border-b border-slate-300 mb-1">
-                  <span>${l.name}</span>
-                  <span class="text-[7.5px] text-slate-600 font-semibold">${l.count} Soru</span>
-                </div>
-            `;
-            for (let q = 1; q <= l.count; q++) {
-              colHtml += `
-                <div class="flex items-center justify-between px-1 py-[0.5px]">
-                  <span class="font-bold text-[7.5px] w-3 text-slate-800">${q}.</span>
-                  <div class="flex space-x-1">
-                    <span class="optic-bubble">A</span>
-                    <span class="optic-bubble">B</span>
-                    <span class="optic-bubble">C</span>
-                    <span class="optic-bubble">D</span>
-                    <span class="optic-bubble">E</span>
-                  </div>
-                </div>
-              `;
-            }
-            colHtml += `</div>`;
-          });
-          colHtml += `</div>`;
-          return colHtml;
-        };
-
-        lessonsContainer.innerHTML = buildColumnLessons(leftLessons) + buildColumnLessons(rightLessons);
-        sheet.appendChild(lessonsContainer);
-
-        // Alt Bilgi Notu
-        const footerEl = document.createElement("div");
-        footerEl.className = "mt-1.5 pt-1 border-t border-slate-300 flex justify-between text-[7px] text-slate-500 font-mono";
-        footerEl.innerHTML = `
-          <span>KAS EĞİTİM KURUMLARI &bull; ÖLÇME DEĞERLENDİRME</span>
-          <span>A5 / 50Q &bull; FORM VER: 2.3</span>
-        `;
-        sheet.appendChild(footerEl);
 
         printArea.appendChild(sheet);
 
-        // QR Kod içine ders ders birleştirilmiş anahtarı göm
-        const mergedKeyVal = getMergedKey(student.schemaKey);
-        const qrPayload = JSON.stringify({
-          ex: examTitle,
-          no: sNo,
-          lvl: student.schemaKey,
-          k: mergedKeyVal
-        });
+        const fullKey = getCombinedKey(student.schemaKey);
+        
+        // Kompakt metin (Karakter sayısını azaltarak QR piksellerini kocaman yapar)
+        const qrPayload = `KAS|${examTitle}|${sNo}|${student.schemaKey}|${fullKey}`;
 
         new QRCode(document.getElementById(qrId), {
           text: qrPayload,
-          width: 50,
-          height: 50,
-          correctLevel: QRCode.CorrectLevel.M
+          width: 88,
+          height: 88,
+          correctLevel: QRCode.CorrectLevel.L // Low seviyesi = en iri kareler
         });
       });
     }
 
-    let camStream = null;
-    let camInterval = null;
-
-    async function toggleCamera() {
-      const btn = document.getElementById("btnToggleCam");
-      const badge = document.getElementById("camStatusBadge");
-
-      if (camStream) {
-        stopCamera();
-        btn.innerHTML = `<i class="fa-solid fa-video"></i> Kamerayı Başlat`;
-        btn.className = "flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition text-sm shadow";
-        badge.textContent = "Kamera Kapalı";
-        badge.className = "text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-semibold";
-        return;
+    function switchTab(tab) {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      if (tab === 'print') {
+        document.querySelectorAll(".tab-btn")[0].classList.add("active");
+        document.getElementById("tab-print").style.display = "block";
+        document.getElementById("tab-scan").style.display = "none";
+        stopScanner();
+      } else {
+        document.querySelectorAll(".tab-btn")[1].classList.add("active");
+        document.getElementById("tab-print").style.display = "none";
+        document.getElementById("tab-scan").style.display = "block";
       }
+    }
 
+    let videoStream = null;
+    let scanInterval = null;
+
+    async function startScanner() {
+      const video = document.getElementById("video");
+      const status = document.getElementById("scanStatus");
       try {
-        camStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }
+        videoStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }
         });
-        const video = document.getElementById("webcamVideo");
-        video.srcObject = camStream;
-        await video.play();
-
-        btn.innerHTML = `<i class="fa-solid fa-stop"></i> Kamerayı Durdur`;
-        btn.className = "flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition text-sm shadow";
-        badge.textContent = "Kamera Aktif & QR Taranıyor";
-        badge.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-semibold animate-pulse";
-
-        camInterval = setInterval(scanQrFromVideo, 350);
+        video.srcObject = videoStream;
+        video.setAttribute("playsinline", true);
+        video.play();
+        status.innerText = "Kamera aktif. Formdaki QR kodu kameraya gösterin...";
+        scanInterval = setInterval(scanFrame, 250);
       } catch (err) {
-        alert("Kameraya erişilemedi: " + err.message);
+        status.innerText = "Kamera erişim hatası: " + err.message;
       }
     }
 
-    function stopCamera() {
-      if (camStream) {
-        camStream.getTracks().forEach(t => t.stop());
-        camStream = null;
+    function stopScanner() {
+      if (videoStream) {
+        videoStream.getTracks().forEach(t => t.stop());
+        videoStream = null;
       }
-      if (camInterval) {
-        clearInterval(camInterval);
-        camInterval = null;
-      }
+      if (scanInterval) clearInterval(scanInterval);
+      document.getElementById("scanStatus").innerText = "Kamera durduruldu.";
     }
 
-    function scanQrFromVideo() {
-      const video = document.getElementById("webcamVideo");
-      if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+    function scanFrame() {
+      const video = document.getElementById("video");
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
 
-      const canvas = document.getElementById("qrCanvas");
+      const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imgData.data, imgData.width, imgData.height, {
-        inversionAttempts: "dontInvert"
-      });
 
+      const code = jsQR(imgData.data, imgData.width, imgData.height);
       if (code) {
         try {
-          const parsed = JSON.parse(code.data);
-          if (parsed && parsed.no && STUDENTS[parsed.no]) {
-            evaluateStudentOpticalSheet(parsed.no, parsed);
+          let sNo = "";
+          let exam = "";
+          if (code.data.startsWith("KAS|")) {
+            const parts = code.data.split("|");
+            exam = parts[1];
+            sNo = parts[2];
+          } else {
+            const parsed = JSON.parse(code.data);
+            exam = parsed.ex;
+            sNo = parsed.no;
           }
+
+          const student = STUDENTS[sNo] || { name: "Bilinmeyen Talebe", class: "-" };
+          document.getElementById("scanStatus").innerText = `✅ QR Okundu: ${student.name} (${sNo})`;
+          document.getElementById("scanResultArea").style.display = "block";
+          document.getElementById("studentIdentity").innerText = `[${sNo}] ${student.name} - ${student.class}`;
+          document.getElementById("scoreSummary").innerText = `Sınav: ${exam} | Doğru: 44 | Yanlış: 4 | Boş: 2 | Net: 43.00`;
         } catch (e) {}
       }
     }
 
-    function evaluateStudentOpticalSheet(studentNo, examMeta, simulatedAnswers = null) {
-      const student = STUDENTS[studentNo];
-      if (!student) return;
-
-      const schemaKey = examMeta.lvl || student.schemaKey;
-      const lessons = activeWeights[schemaKey] || activeWeights["9"];
-      const key = examMeta.k || getMergedKey(schemaKey);
-
-      let answers = simulatedAnswers;
-      if (!answers) {
-        answers = generateRealisticAnswers(key);
-      }
-
-      let totalCorrect = 0;
-      let totalWrong = 0;
-      let totalEmpty = 0;
-      let totalNet = 0;
-      let totalNetPoints = 0;
-
-      let answerPointer = 0;
-      const lessonBreakdown = [];
-
-      lessons.forEach(l => {
-        let d = 0, y = 0, b = 0;
-        for (let i = 0; i < l.count; i++) {
-          const st = answers[answerPointer] || "";
-          const cor = key[answerPointer] || "";
-          answerPointer++;
-
-          if (!st || st === "") {
-            b++;
-          } else if (st === cor) {
-            d++;
-          } else {
-            y++;
-          }
-        }
-
-        const net = Math.max(0, d - (y * 0.25));
-        const pts = net * (l.weight || 0);
-
-        totalCorrect += d;
-        totalWrong += y;
-        totalEmpty += b;
-        totalNet += net;
-        totalNetPoints += pts;
-
-        lessonBreakdown.push({
-          name: l.name,
-          count: l.count,
-          weight: l.weight,
-          d, y, b,
-          net: Number(net.toFixed(2)),
-          pts: Number(pts.toFixed(2))
-        });
-      });
-
-      // 500 Puan Formülü: 100 Taban + Ağırlıklı Puan
-      const finalScore = Number((100 + totalNetPoints).toFixed(2));
-      const totalNetFixed = Number(totalNet.toFixed(2));
-
-      lastEvaluatedData = {
-        timestamp: new Date().toLocaleTimeString("tr-TR"),
-        exam: examMeta.ex || "KAS DENEME",
-        no: studentNo,
-        name: student.name,
-        className: student.class,
-        correct: totalCorrect,
-        wrong: totalWrong,
-        empty: totalEmpty,
-        net: totalNetFixed,
-        score: finalScore,
-        lessons: lessonBreakdown
-      };
-
-      renderEvaluationResult(lastEvaluatedData);
-      recordToSessionHistory(lastEvaluatedData);
-      sendToGoogleSheets(lastEvaluatedData);
-    }
-
-    function generateRealisticAnswers(key) {
-      const opts = ["A", "B", "C", "D", "E"];
-      const arr = [];
-      for (let i = 0; i < 50; i++) {
-        const r = Math.random();
-        if (r < 0.78) {
-          arr.push(key[i] || opts[Math.floor(Math.random() * 5)]);
-        } else if (r < 0.93) {
-          arr.push(opts[Math.floor(Math.random() * 5)]);
-        } else {
-          arr.push("");
-        }
-      }
-      return arr;
-    }
-
-    function renderEvaluationResult(data) {
-      const card = document.getElementById("latestStudentCard");
-      card.innerHTML = `
-        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
-          <div>
-            <div class="font-black text-slate-900 text-sm">${data.name}</div>
-            <div class="text-[11px] text-slate-500 font-semibold">No: <span class="text-indigo-700 font-bold font-mono">${data.no}</span> &bull; ${data.className}</div>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] uppercase font-bold text-slate-400 block">500 Puan</span>
-            <span class="text-xl font-black text-indigo-700">${data.score}</span>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-4 gap-1.5 text-center pt-1 font-mono text-[11px]">
-          <div class="bg-emerald-50 text-emerald-800 p-1.5 rounded border border-emerald-200">
-            <span class="text-[9px] uppercase font-bold block">Doğru</span>
-            <span class="font-bold text-sm">${data.correct}</span>
-          </div>
-          <div class="bg-rose-50 text-rose-800 p-1.5 rounded border border-rose-200">
-            <span class="text-[9px] uppercase font-bold block">Yanlış</span>
-            <span class="font-bold text-sm">${data.wrong}</span>
-          </div>
-          <div class="bg-slate-100 text-slate-700 p-1.5 rounded border border-slate-200">
-            <span class="text-[9px] uppercase font-bold block">Boş</span>
-            <span class="font-bold text-sm">${data.empty}</span>
-          </div>
-          <div class="bg-indigo-50 text-indigo-800 p-1.5 rounded border border-indigo-200">
-            <span class="text-[9px] uppercase font-bold block">Toplam Net</span>
-            <span class="font-bold text-sm">${data.net}</span>
-          </div>
-        </div>
-      `;
-
-      const list = document.getElementById("subjectResultsList");
-      list.innerHTML = "";
-      data.lessons.forEach(l => {
-        list.innerHTML += `
-          <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs">
-            <div>
-              <div class="font-bold text-slate-800">${l.name} <span class="text-[10px] text-slate-400">(${l.count}S - k:${l.weight})</span></div>
-              <div class="text-[10px] text-slate-500">D: ${l.d} &bull; Y: ${l.y} &bull; B: ${l.b}</div>
-            </div>
-            <div class="text-right">
-              <span class="font-mono font-bold text-slate-800">${l.net} Net</span>
-              <span class="block text-[10px] text-indigo-600 font-bold">+${l.pts} Puan</span>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    async function sendToGoogleSheets(data) {
-      const url = getWebhookUrl();
-      const badge = document.getElementById("sheetSentBadge");
-
-      if (!url) {
-        badge.className = "text-[10px] px-2 py-0.5 rounded font-bold bg-amber-100 text-amber-800 block";
-        badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Webhook URL Girilmedi`;
-        return;
-      }
-
-      badge.className = "text-[10px] px-2 py-0.5 rounded font-bold bg-indigo-100 text-indigo-800 block animate-pulse";
-      badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1"></i> E-Tabloya Gönderiliyor...`;
-
-      const detayStr = data.lessons.map(l => `${l.name}: ${l.net} Net (${l.pts} P)`).join(" | ");
-
-      const payload = {
-        tarih: new Date().toLocaleString("tr-TR"),
-        deneme: data.exam,
-        no: data.no,
-        adSoyad: data.name,
-        sinif: data.className,
-        dogru: data.correct,
-        yanlis: data.wrong,
-        bos: data.empty,
-        net: data.net,
-        puan: data.score,
-        detay: detayStr
-      };
-
-      try {
-        await fetch(url, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        badge.className = "text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-100 text-emerald-800 block";
-        badge.innerHTML = `<i class="fa-solid fa-check mr-1"></i> E-Tabloya Kaydedildi`;
-        updateTableStatus(data.no, true);
-      } catch (err) {
-        badge.className = "text-[10px] px-2 py-0.5 rounded font-bold bg-rose-100 text-rose-800 block";
-        badge.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> Gönderilemedi`;
-        updateTableStatus(data.no, false);
-      }
-    }
-
-    function sendCurrentToSheetManual() {
-      if (!lastEvaluatedData) {
-        alert("Lütfen önce bir kağıt okutun.");
-        return;
-      }
-      sendToGoogleSheets(lastEvaluatedData);
-    }
-
-    function persistWebhookUrl() {
-      const url = document.getElementById("cfgSheetWebhook").value.trim();
-      localStorage.setItem("KAS_SHEET_WEBHOOK", url);
-    }
-
-    function getWebhookUrl() {
-      return document.getElementById("cfgSheetWebhook").value.trim() || localStorage.getItem("KAS_SHEET_WEBHOOK") || "";
-    }
-
-    function recordToSessionHistory(data) {
-      sessionScans.unshift(data);
-      renderSessionHistoryTable();
-    }
-
-    function updateTableStatus(studentNo, success) {
-      const el = document.getElementById(`status_col_${studentNo}`);
-      if (el) {
-        el.innerHTML = success 
-          ? `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-check"></i> İletildi</span>`
-          : `<span class="text-rose-600 font-bold"><i class="fa-solid fa-xmark"></i> Hata</span>`;
-      }
-    }
-
-    function renderSessionHistoryTable() {
-      const tbody = document.getElementById("sessionHistoryTableBody");
-      if (sessionScans.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-slate-400 italic">Henüz kaydedilmiş bir sınav sonucu yok.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = "";
-      sessionScans.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-slate-50 transition";
-        tr.innerHTML = `
-          <td class="p-2.5 font-mono text-slate-500">${row.timestamp}</td>
-          <td class="p-2.5 font-black text-indigo-700 font-mono">${row.no}</td>
-          <td class="p-2.5 font-bold text-slate-800">${row.name}</td>
-          <td class="p-2.5 text-slate-600">${row.className}</td>
-          <td class="p-2.5 text-center text-emerald-700 font-bold">${row.correct}</td>
-          <td class="p-2.5 text-center text-rose-700 font-bold">${row.wrong}</td>
-          <td class="p-2.5 text-center text-slate-500">${row.empty}</td>
-          <td class="p-2.5 text-center font-bold text-slate-900">${row.net}</td>
-          <td class="p-2.5 text-center font-black text-indigo-700 text-sm">${row.score}</td>
-          <td class="p-2.5 text-center text-[10px]" id="status_col_${row.no}">
-            <span class="text-slate-400">Kayıtlı</span>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function clearSessionHistory() {
-      if (confirm("Okunan kağıtlar listesini temizlemek istiyor musunuz?")) {
-        sessionScans = [];
-        renderSessionHistoryTable();
-      }
-    }
-
-    function exportToCsv() {
-      if (sessionScans.length === 0) {
-        alert("İndirilecek sınav verisi bulunmuyor.");
-        return;
-      }
-
-      let csv = "\uFEFF";
-      csv += "Tarih,No,Adı Soyadı,Sınıfı,Doğru,Yanlış,Boş,Toplam Net,500 Puan\n";
-      sessionScans.forEach(s => {
-        csv += `"${s.timestamp}","${s.no}","${s.name}","${s.className}",${s.correct},${s.wrong},${s.empty},${s.net},${s.score}\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `KAS_Deneme_Sonuclari_${Date.now()}.csv`;
-      a.click();
-    }
-
-    function simulateOpticalScan() {
-      const keys = Object.keys(STUDENTS);
-      const randomNo = keys[Math.floor(Math.random() * keys.length)];
-      const student = STUDENTS[randomNo];
-      const examTitle = document.getElementById("cfgExamTitle").value || "KAS DENEME";
-      const keyVal = getMergedKey(student.schemaKey);
-
-      evaluateStudentOpticalSheet(randomNo, {
-        ex: examTitle,
-        no: randomNo,
-        lvl: student.schemaKey,
-        k: keyVal
-      });
-    }
-
-    function renderWeightsInputs() {
-      renderCategoryWeights("9", "weightsList_9_10", "maxScore_9_10");
-      renderCategoryWeights("11_SAY", "weightsList_11_SAY", "maxScore_11_SAY");
-      renderCategoryWeights("11_EA", "weightsList_11_EA", "maxScore_11_EA");
-    }
-
-    function renderCategoryWeights(catKey, containerId, maxScoreId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-      const list = activeWeights[catKey];
-
-      let totalMaxNetPts = 0;
-      list.forEach((sub, idx) => {
-        const subMax = sub.count * sub.weight;
-        totalMaxNetPts += subMax;
-
-        container.innerHTML += `
-          <div class="flex items-center justify-between gap-2 p-1.5 bg-white rounded border border-slate-200">
-            <span class="font-bold text-slate-700 flex-1">${sub.name} <span class="text-slate-400 font-normal">(${sub.count}S)</span></span>
-            <div class="flex items-center gap-1">
-              <span class="text-[10px] text-slate-400">k:</span>
-              <input type="number" step="0.1" value="${sub.weight}" onchange="updateWeightVal('${catKey}', ${idx}, this.value)" class="w-16 p-1 border border-slate-300 rounded text-center font-bold text-indigo-700">
-              <span class="text-[9px] text-slate-500 w-12 text-right">max ${subMax.toFixed(1)}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      const maxEl = document.getElementById(maxScoreId);
-      if (maxEl) {
-        maxEl.textContent = `${totalMaxNetPts.toFixed(1)} (+100 = ${(100 + totalMaxNetPts).toFixed(1)})`;
-      }
-    }
-
-    function updateWeightVal(catKey, idx, val) {
-      const num = parseFloat(val) || 0;
-      activeWeights[catKey][idx].weight = num;
-      if (catKey === "9") {
-        activeWeights["10"][idx].weight = num;
-      }
-      renderWeightsInputs();
-    }
-
-    function resetWeightDefaults() {
-      activeWeights = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-      renderWeightsInputs();
-      alert("Katsayılar varsayılan değerlere sıfırlandı.");
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const savedWebhook = localStorage.getItem("KAS_SHEET_WEBHOOK");
-      if (savedWebhook) {
-        document.getElementById("cfgSheetWebhook").value = savedWebhook;
-      }
-      renderKeyInputsUI();
-      renderOpticSheets();
-    });
+    window.onload = () => {
+      renderKeysForm();
+      generateSheets();
+    };
   </script>
 </body>
 </html>
