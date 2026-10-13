@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - A4 Optik Sistemi & Otomatik OMR</title>
+  <title>KAS Denemeleri - A4 Profesyonel Optik Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
@@ -11,6 +11,7 @@
       --primary: #1e3a8a;
       --success: #15803d;
       --border-color: #222;
+      --omr-red: #dc2626;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
     body { margin: 0; padding: 12px; background: #f8fafc; color: #0f172a; }
@@ -51,49 +52,47 @@
     .print-area { display: flex; flex-direction: column; gap: 20px; }
     .sheet-wrapper {
       width: 210mm; height: 296mm; max-height: 296mm; background: white;
-      margin: 0 auto; padding: 8mm 12mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      margin: 0 auto; padding: 10mm 14mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       position: relative; color: #000; box-sizing: border-box;
       overflow: hidden; page-break-after: always; page-break-inside: avoid;
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
-    /* NİŞANGAH / HEDEF KÖŞE İŞARETÇİLERİ */
-    .target-marker {
-      position: absolute; width: 14mm; height: 14mm; z-index: 5;
-    }
-    .tm-tl { top: 4mm; left: 4mm; }
-    .tm-tr { top: 4mm; right: 4mm; }
-    .tm-bl { bottom: 4mm; left: 4mm; }
-    .tm-br { bottom: 4mm; right: 4mm; }
+    /* 4 KÖŞE NİŞANGAHLARI */
+    .target-marker { position: absolute; width: 14mm; height: 14mm; z-index: 5; }
+    .tm-tl { top: 5mm; left: 5mm; }
+    .tm-tr { top: 5mm; right: 5mm; }
+    .tm-bl { bottom: 5mm; left: 5mm; }
+    .tm-br { bottom: 5mm; right: 5mm; }
 
     .optik-header {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2.5px solid #000; padding-bottom: 6px; margin-bottom: 8px;
-      padding-right: 28mm;
+      border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px;
+      padding-right: 24mm;
     }
-    .optik-title h1 { margin: 0; font-size: 20px; font-weight: 800; }
-    .optik-title h3 { margin: 4px 0 0 0; font-size: 13px; font-weight: 600; color: #333; }
+    .optik-title h1 { margin: 0; font-size: 21px; font-weight: 800; }
+    .optik-title h3 { margin: 3px 0 0 0; font-size: 13px; font-weight: 600; color: #333; }
     
     .qr-box {
-      width: 120px; height: 120px; background: #fff; padding: 4px;
+      width: 105px; height: 105px; background: #fff; padding: 3px;
       display: flex; align-items: center; justify-content: center;
       border: 2px solid #000; border-radius: 4px;
     }
 
     .top-section {
-      display: flex; gap: 14px; margin-bottom: 8px; border-bottom: 2px dashed #444; padding-bottom: 8px;
+      display: flex; gap: 14px; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 8px;
     }
     .student-info-box {
-      flex: 1; border: 2px solid #000; padding: 8px 12px; font-size: 12px;
+      flex: 1; border: 1.5px solid #000; padding: 8px 12px; font-size: 12px;
       display: flex; flex-direction: column; justify-content: center; background: #fafafa;
     }
     .info-row { margin-bottom: 4px; display: flex; align-items: center; }
-    .info-row span.label { font-weight: 800; width: 90px; color: #111; font-size: 11.5px; }
+    .info-row span.label { font-weight: 800; width: 95px; color: #111; font-size: 11.5px; }
     .info-row span.val { font-weight: 800; font-size: 13.5px; color: #000; }
 
     .num-grid {
       display: flex; gap: 8px; font-size: 10px; text-align: center;
-      border: 2px solid #000; padding: 4px 10px; background: #fff;
+      border: 1.5px solid #000; padding: 4px 10px; background: #fff;
     }
     .num-col { display: flex; flex-direction: column; gap: 2px; align-items: center; }
     .num-col-title { font-weight: 800; font-size: 9px; margin-bottom: 2px; }
@@ -104,20 +103,37 @@
     }
     .bubble.filled { background: #000 !important; color: #fff !important; }
 
-    .lessons-container {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; font-size: 10px;
+    /* ================= YENİ TEMİZ CEVAP FORMU (ÖSYM STANDARDI) ================= */
+    .omr-main-card {
+      border: 2px solid #000; background: #fff; margin-top: 4px;
     }
-    .lesson-block { border: 1.5px solid #222; padding: 5px 8px; border-radius: 4px; background: #fff; }
-    .lesson-title {
-      font-weight: 800; font-size: 11px; text-align: center; background: #f1f5f9;
-      padding: 3px 0; margin-bottom: 4px; border-bottom: 1.5px solid #222;
+    .omr-card-header {
+      text-align: center; font-weight: 800; font-size: 13px; letter-spacing: 2px;
+      background: #f1f5f9; padding: 4px 0; border-bottom: 2px solid #000;
     }
-    .question-row {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; padding: 0 4px;
+    .omr-columns-wrapper {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 8px 14px;
     }
-    .q-num { font-weight: 800; font-size: 9.5px; width: 18px; text-align: right; }
-    .q-bubbles { display: flex; gap: 5px; }
-    .q-bubbles .bubble { width: 14px; height: 14px; font-size: 8.5px; }
+    .omr-col-box {
+      border: 1.5px solid var(--omr-red); padding: 4px 6px; border-radius: 2px;
+    }
+    .omr-row {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 7.6mm; border-bottom: 1px solid #f1f5f9;
+    }
+    .omr-row:nth-child(even) { background: #fdf2f2; }
+    .omr-q-num {
+      width: 22px; font-weight: 800; font-size: 12px; text-align: center; color: #000;
+      border-right: 1.5px solid var(--omr-red); margin-right: 6px;
+    }
+    .omr-bubbles-grp {
+      display: flex; justify-content: space-between; flex: 1; padding: 0 6px;
+    }
+    .omr-bubble {
+      width: 5.6mm; height: 5.6mm; border: 1.5px solid var(--omr-red); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #000; background: #fff;
+    }
 
     /* ================= KAMERA ARAYÜZÜ ================= */
     .step-banner {
@@ -146,12 +162,12 @@
     #omr-guide {
       position: absolute; width: 82%; aspect-ratio: 210 / 297; max-height: 92%;
       border: 2.5px solid rgba(34, 197, 94, 0.7); border-radius: 6px; pointer-events: none;
-      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     #omr-guide.locked {
       border: 3.5px solid #22c55e !important;
-      box-shadow: 0 0 25px #22c55e inset, 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 25px #22c55e inset, 0 0 0 9999px rgba(0, 0, 0, 0.55) !important;
     }
     .guide-target {
       position: absolute; width: 26px; height: 26px; border: 2.5px solid #22c55e; border-radius: 50%;
@@ -169,9 +185,9 @@
     @media print {
       body { background: white; padding: 0; }
       .no-print { display: none !important; }
-      .print-area { gap: 0; }
+      .print-area { display: flex !important; gap: 0; }
       .sheet-wrapper {
-        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 8mm 12mm;
+        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 10mm 14mm;
       }
     }
   </style>
@@ -185,7 +201,7 @@
       <button class="tab-btn" onclick="switchTab('scan')">📷 2. Otomatik Optik Oku</button>
     </div>
 
-    <!-- 1. YAZDIRMA & BULUT SENKRONU -->
+    <!-- 1. YAZDIRMA -->
     <div id="tab-print">
       <div class="form-row">
         <label>Deneme Başlığı:</label>
@@ -229,7 +245,7 @@
       <div class="keys-grid" id="keysInputsArea"></div>
     </div>
 
-    <!-- 2. TAM OTOMATİK OKUYUCU -->
+    <!-- 2. TAM OTOMATİK OKUYUCU (ALTTA ASLA OPTİK GÖZÜKMEZ) -->
     <div id="tab-scan" style="display:none;">
       <div class="step-banner">
         <div class="step-item active" id="stepIndicator1">1. AŞAMA: Karekodu Okut</div>
@@ -269,13 +285,13 @@
     </div>
   </div>
 
+  <!-- A4 BASKI ALANI (Kamerada tamamen gizlenir) -->
   <div class="print-area" id="printArea"></div>
 
   <script>
-    // VERDİĞİNİZ /DEV GOOGLE APPS SCRIPT URL'Sİ TAM OLARAK ENTEGRE EDİLDİ
+    // DEV GOOGLE APPS SCRIPT URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/dev";
 
-    // Nişangah / Hedef Köşe İşaretçisi SVG'si
     const TARGET_SVG = `
       <svg viewBox="0 0 50 50" width="100%" height="100%">
         <circle cx="25" cy="25" r="22" stroke="black" stroke-width="3" fill="none" />
@@ -397,6 +413,7 @@
       return combined;
     }
 
+    // ================= GÖNDERDİĞİNİZ ÖRNEK GİBİ 2 SÜTUNLU 50 SORULUK OPTİK ÜRETİMİ =================
     function generateSheets() {
       const selected = document.getElementById("studentSelect").value;
       const examTitle = document.getElementById("examTitle").value;
@@ -407,7 +424,6 @@
 
       studentKeys.forEach(sNo => {
         const student = STUDENTS[sNo];
-        const lessons = SCHEMAS[student.schemaKey];
         const tensDigit = parseInt(sNo[0]);
         const onesDigit = parseInt(sNo[1]);
 
@@ -415,26 +431,35 @@
         sheet.className = "sheet-wrapper";
         const qrId = `qr_${sNo}`;
 
-        let lessonsHtml = "";
-        lessons.forEach(l => {
-          let rowsHtml = "";
-          for (let i = 1; i <= l.count; i++) {
-            rowsHtml += `
-              <div class="question-row" data-lesson="${l.key}" data-q="${i}">
-                <span class="q-num">${i}.</span>
-                <div class="q-bubbles">
-                  <span class="bubble" data-opt="A">A</span><span class="bubble" data-opt="B">B</span>
-                  <span class="bubble" data-opt="C">C</span><span class="bubble" data-opt="D">D</span>
-                  <span class="bubble" data-opt="E">E</span>
-                </div>
-              </div>`;
-          }
-          lessonsHtml += `
-            <div class="lesson-block">
-              <div class="lesson-title">${l.name} (${l.count} Soru)</div>
-              ${rowsHtml}
+        // 1-25 Sol Sütun, 26-50 Sağ Sütun
+        let col1Rows = "";
+        let col2Rows = "";
+        for (let q = 1; q <= 25; q++) {
+          col1Rows += `
+            <div class="omr-row" data-q="${q}">
+              <div class="omr-q-num">${q}</div>
+              <div class="omr-bubbles-grp">
+                <span class="omr-bubble" data-opt="A">A</span>
+                <span class="omr-bubble" data-opt="B">B</span>
+                <span class="omr-bubble" data-opt="C">C</span>
+                <span class="omr-bubble" data-opt="D">D</span>
+                <span class="omr-bubble" data-opt="E">E</span>
+              </div>
             </div>`;
-        });
+        }
+        for (let q = 26; q <= 50; q++) {
+          col2Rows += `
+            <div class="omr-row" data-q="${q}">
+              <div class="omr-q-num">${q}</div>
+              <div class="omr-bubbles-grp">
+                <span class="omr-bubble" data-opt="A">A</span>
+                <span class="omr-bubble" data-opt="B">B</span>
+                <span class="omr-bubble" data-opt="C">C</span>
+                <span class="omr-bubble" data-opt="D">D</span>
+                <span class="omr-bubble" data-opt="E">E</span>
+              </div>
+            </div>`;
+        }
 
         let tensBubbles = "";
         let onesBubbles = "";
@@ -444,7 +469,7 @@
         }
 
         sheet.innerHTML = `
-          <!-- 4 ADET HASSAS NİŞANGAH İŞARETÇİSİ -->
+          <!-- 4 HASSAS NİŞANGAH -->
           <div class="target-marker tm-tl">${TARGET_SVG}</div>
           <div class="target-marker tm-tr">${TARGET_SVG}</div>
           <div class="target-marker tm-bl">${TARGET_SVG}</div>
@@ -477,7 +502,14 @@
             </div>
           </div>
 
-          <div class="lessons-container">${lessonsHtml}</div>
+          <!-- DÜZENLİ CEVAP FORMU (KIRMIZI BALONCUKLAR & ÇERÇEVELER) -->
+          <div class="omr-main-card">
+            <div class="omr-card-header">CEVAP FORMU (50 SORU)</div>
+            <div class="omr-columns-wrapper">
+              <div class="omr-col-box">${col1Rows}</div>
+              <div class="omr-col-box">${col2Rows}</div>
+            </div>
+          </div>
         `;
 
         printArea.appendChild(sheet);
@@ -487,28 +519,33 @@
 
         new QRCode(document.getElementById(qrId), {
           text: qrPayload,
-          width: 110,
-          height: 110,
+          width: 98,
+          height: 98,
           correctLevel: QRCode.CorrectLevel.L
         });
       });
     }
 
+    // ================= SEKME DEĞİŞİMİNDE BASKI ALANINI GİZLEME =================
     function switchTab(tab) {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      const printArea = document.getElementById("printArea");
+
       if (tab === 'print') {
         document.querySelectorAll(".tab-btn")[0].classList.add("active");
         document.getElementById("tab-print").style.display = "block";
         document.getElementById("tab-scan").style.display = "none";
+        printArea.style.display = "flex"; // Yazdırma sekmesinde göster
         stopScanner();
       } else {
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
         document.getElementById("tab-print").style.display = "none";
         document.getElementById("tab-scan").style.display = "block";
+        printArea.style.display = "none"; // KAMERA SEKMESİNDE ASLA ÇIKMAZ
       }
     }
 
-    // ================= KAMERA MOTORU & HASSAS OPTİK OKUMA =================
+    // ================= KAMERA MOTORU & TEMİZ MATRİS OKUYUCU =================
     let videoStream = null;
     let scanInterval = null;
     let currentStep = 1;
@@ -591,7 +628,7 @@
 
           document.getElementById("scanStatus").innerHTML = `
             <span style="color:#15803d;">✅ [${activeExamData.sNo}] ${student.name} tanındı!</span><br>
-            4 köşedeki nişangahları dairelere oturtun (Otomatik okunacak)...
+            4 nişangahı yeşil dairelere getirin (Otomatik okunacak)...
           `;
 
           if (navigator.vibrate) navigator.vibrate(100);
@@ -611,7 +648,7 @@
             if (navigator.vibrate) navigator.vibrate([70, 50, 70]);
             document.getElementById("scanStatus").innerText = "⚡ Form işleniyor, şıklar taranıyor...";
             setTimeout(() => {
-              evaluateOpticalMarks(canvas, ctx);
+              evaluateCleanOMR(canvas, ctx);
             }, 100);
           }
         } else {
@@ -648,7 +685,8 @@
       return (tl && tr) || (bl && br) || (tl && br) || (tr && bl);
     }
 
-    function evaluateOpticalMarks(canvas, ctx) {
+    // ================= 2 SÜTUNLU TEMİZ MATRİS BALONCUK ANALİZİ =================
+    function evaluateCleanOMR(canvas, ctx) {
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
       const lessons = SCHEMAS[lvl];
@@ -658,65 +696,77 @@
       const imgData = ctx.getImageData(0, 0, w, h);
       const data = imgData.data;
 
-      let studentAnswers = "";
-      let totalD = 0, totalY = 0, totalB = 0;
-      let totalWeightedNetPoints = 0;
-      let questionIndex = 0;
-
-      const formLeft = Math.floor(w * 0.14);
-      const formRight = Math.floor(w * 0.86);
-      const formTop = Math.floor(h * 0.38);
+      let detectedAnswers = [];
+      const formLeft = Math.floor(w * 0.15);
+      const formRight = Math.floor(w * 0.85);
+      const formTop = Math.floor(h * 0.35); // 1. ve 26. soruların dikey başlangıcı
       const formBottom = Math.floor(h * 0.88);
 
-      lessons.forEach((l, lIdx) => {
-        const isRightCol = lIdx % 2 === 1;
-        const colStartX = isRightCol ? (formLeft + (formRight - formLeft) * 0.52) : formLeft;
-        const colEndX = isRightCol ? formRight : (formLeft + (formRight - formLeft) * 0.48);
+      const col1XStart = formLeft + (formRight - formLeft) * 0.08;
+      const col1XEnd = formLeft + (formRight - formLeft) * 0.46;
+      const col2XStart = formLeft + (formRight - formLeft) * 0.54;
+      const col2XEnd = formRight - (formRight - formLeft) * 0.08;
 
+      const rowHeight = (formBottom - formTop) / 25;
+
+      // 50 Soruyu sırayla tara (1-25 Sol sütun, 26-50 Sağ sütun)
+      for (let q = 1; q <= 50; q++) {
+        const isCol2 = q > 25;
+        const qIdxInCol = isCol2 ? (q - 26) : (q - 1);
+        const curY = formTop + (qIdxInCol * rowHeight) + (rowHeight * 0.5);
+
+        const curXStart = isCol2 ? col2XStart : col1XStart;
+        const curXEnd = isCol2 ? col2XEnd : col1XEnd;
+        const bubbleAreaWidth = curXEnd - curXStart;
+        const bubbleStep = bubbleAreaWidth / 5;
+
+        const options = ["A", "B", "C", "D", "E"];
+        let darkestOpt = "B"; // Boş
+        let maxDarkness = 0;
+
+        options.forEach((opt, optIdx) => {
+          const bX = Math.floor(curXStart + (optIdx * bubbleStep) + (bubbleStep * 0.5));
+          const bY = Math.floor(curY);
+
+          let darkCount = 0;
+          for (let dy = -6; dy <= 6; dy += 2) {
+            for (let dx = -6; dx <= 6; dx += 2) {
+              const pIdx = ((bY + dy) * w + (bX + dx)) * 4;
+              const brightness = (data[pIdx] + data[pIdx+1] + data[pIdx+2]) / 3;
+              if (brightness < 105) darkCount++;
+            }
+          }
+
+          if (darkCount > maxDarkness && darkCount > 12) {
+            maxDarkness = darkCount;
+            darkestOpt = opt;
+          }
+        });
+
+        detectedAnswers.push(darkestOpt);
+      }
+
+      // Branş bazlı puan ve net hesabı
+      let studentAnswersStr = detectedAnswers.join("");
+      let totalD = 0, totalY = 0, totalB = 0;
+      let totalWeightedNetPoints = 0;
+      let qPointer = 0;
+
+      lessons.forEach(l => {
         for (let i = 0; i < l.count; i++) {
-          const correctChoice = masterKey[questionIndex] || "X";
-          const qY = formTop + (i * ((formBottom - formTop) / 22));
+          const ans = detectedAnswers[qPointer] || "B";
+          const correctChoice = masterKey[qPointer] || "X";
 
-          let darkestOpt = "B";
-          let maxDarkScore = 0;
-
-          const options = ["A", "B", "C", "D", "E"];
-          const bubbleStartX = colEndX - ((colEndX - colStartX) * 0.45);
-          const bubbleGap = ((colEndX - colStartX) * 0.08);
-
-          options.forEach((opt, optIdx) => {
-            const bx = Math.floor(bubbleStartX + (optIdx * bubbleGap));
-            const by = Math.floor(qY);
-
-            let darkPixelCount = 0;
-            for (let dy = -5; dy <= 5; dy += 2) {
-              for (let dx = -5; dx <= 5; dx += 2) {
-                const pIdx = ((by + dy) * w + (bx + dx)) * 4;
-                const brightness = (data[pIdx] + data[pIdx+1] + data[pIdx+2]) / 3;
-                if (brightness < 105) darkPixelCount++;
-              }
-            }
-
-            if (darkPixelCount > maxDarkScore && darkPixelCount > 10) {
-              maxDarkScore = darkPixelCount;
-              darkestOpt = opt;
-            }
-          });
-
-          const detected = darkestOpt;
-
-          if (detected === "B" || detected === "X") {
+          if (ans === "B" || ans === "X") {
             totalB++;
-          } else if (detected === correctChoice) {
+          } else if (ans === correctChoice) {
             totalD++;
             totalWeightedNetPoints += l.weight;
           } else {
             totalY++;
             totalWeightedNetPoints -= (l.weight / 4);
           }
-
-          studentAnswers += detected;
-          questionIndex++;
+          qPointer++;
         }
       });
 
@@ -724,6 +774,7 @@
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
       const student = STUDENTS[activeExamData.sNo] || { name: "Bilinmeyen Talebe", class: "-" };
 
+      // Sonucu Göster
       document.getElementById("scanResultArea").style.display = "block";
       document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class})`;
       document.getElementById("scoreSummary").innerHTML = `
@@ -731,7 +782,7 @@
         <strong>Doğru:</strong> ${totalD} | <strong>Yanlış:</strong> ${totalY} | <strong>Boş:</strong> ${totalB}<br>
         <strong>Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Puanı:</strong> ${finalScore.toFixed(2)}
       `;
-      document.getElementById("detailedAnswers").innerText = `Cevaplar: ${studentAnswers}`;
+      document.getElementById("detailedAnswers").innerText = `Cevaplar: ${studentAnswersStr}`;
       document.getElementById("scanStatus").innerHTML = `🎉 <strong>Okundu! E-Tabloya aktarılıyor...</strong>`;
 
       sendToGoogleSheetReliable({
@@ -745,13 +796,12 @@
         bos: totalB,
         net: totalNet.toFixed(2),
         puan: finalScore.toFixed(2),
-        detay: studentAnswers
+        detay: studentAnswersStr
       });
 
       setTimeout(() => { resetWizard(); }, 4000);
     }
 
-    // ================= GARANTİLİ GOOGLE E-TABLO AKTARIMI (/DEV UYUMLU) =================
     function sendToGoogleSheetReliable(payload) {
       const badge = document.getElementById("syncBadge");
       badge.innerText = "⏳ Tabloya Yazılıyor...";
@@ -761,11 +811,9 @@
       const queryParams = new URLSearchParams(payload).toString();
       const getUrl = `${SCRIPT_URL}?${queryParams}`;
 
-      // 1. Yöntem: Görünmez Image Ping (CORS ve yönlendirme engeline kesinlikle takılmaz)
       const img = new Image();
       img.src = getUrl;
 
-      // 2. Yöntem: POST Fetch isteği
       fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
