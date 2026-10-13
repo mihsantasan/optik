@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - Kişiye Özel Optik Sistemi</title>
+  <title>KAS Denemeleri - A4 Optik Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
@@ -18,7 +18,7 @@
     .panel {
       background: white; border-radius: 8px; padding: 15px 20px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 20px;
-      max-width: 900px; margin-left: auto; margin-right: auto;
+      max-width: 950px; margin-left: auto; margin-right: auto;
     }
     .tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
     .tab-btn {
@@ -37,7 +37,7 @@
     button.action-btn:hover { opacity: 0.9; }
 
     .keys-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 10px; margin-top: 10px; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;
     }
     .key-item { display: flex; flex-direction: column; gap: 4px; }
@@ -46,96 +46,164 @@
     .key-badge.ok { background: #bbf7d0; color: #166534; }
     .key-input { text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
 
-    /* A5 Baskı Alanı */
-    @page { size: A5 portrait; margin: 4mm; }
+    /* ================= A4 BASKI ALANI ================= */
+    @page {
+      size: A4 portrait;
+      margin: 0; /* Tarayıcının dış boşluk ekleyip 2. sayfaya taşırmasını engeller */
+    }
     .print-area { display: flex; flex-direction: column; gap: 20px; }
 
     .sheet-wrapper {
-      width: 148mm; min-height: 202mm; background: white; margin: 0 auto;
-      padding: 5mm 6mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      position: relative; color: #000; box-sizing: border-box;
+      width: 210mm;
+      height: 296mm; /* Tam A4 boyutu */
+      max-height: 296mm;
+      background: white;
+      margin: 0 auto;
+      padding: 8mm 12mm;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      position: relative;
+      color: #000;
+      box-sizing: border-box;
+      overflow: hidden; /* Kesinlikle ikinci sayfaya taşmaz */
       page-break-after: always;
+      page-break-inside: avoid;
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
-    /* Köşe İşaretçileri */
+    /* 4 Köşe İşaretçisi */
     .corner-marker {
-      position: absolute; width: 6mm; height: 6mm; background: black; z-index: 5;
+      position: absolute; width: 8mm; height: 8mm; background: black; z-index: 5;
     }
-    .cm-tl { top: 3.5mm; left: 3.5mm; }
-    .cm-tr { top: 3.5mm; right: 3.5mm; }
-    .cm-bl { bottom: 3.5mm; left: 3.5mm; }
-    .cm-br { bottom: 3.5mm; right: 3.5mm; }
+    .cm-tl { top: 5mm; left: 5mm; }
+    .cm-tr { top: 5mm; right: 5mm; }
+    .cm-bl { bottom: 5mm; left: 5mm; }
+    .cm-br { bottom: 5mm; right: 5mm; }
 
-    /* Başlık ve İri QR Alanı */
+    /* Üst Bölüm: Başlık + İri Karekod */
     .optik-header {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 6px;
-      padding-right: 22mm; /* Sağ üst işaretçiyle güvenli mesafe */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2.5px solid #000;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      padding-right: 28mm; /* Sağ üst işaretçiyle güvenli mesafe */
     }
-    .optik-title h2 { margin: 0; font-size: 16px; letter-spacing: 0.5px; }
-    .optik-title h4 { margin: 2px 0 0 0; font-size: 11px; font-weight: normal; }
+    .optik-title h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+    .optik-title h3 { margin: 4px 0 0 0; font-size: 13px; font-weight: 600; color: #333; }
     
-    /* İrileştirilmiş QR Kutusu ve Sessiz Alan */
+    /* İrileştirilmiş Karekod Kutusu */
     .qr-box {
-      width: 95px; height: 95px; background: #fff; padding: 4px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1.5px solid #222; border-radius: 4px;
+      width: 130px;
+      height: 130px;
+      background: #fff;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #000;
+      border-radius: 4px;
     }
 
+    /* Talebe Bilgi ve Kodlanmış Numara */
     .top-section {
-      display: flex; gap: 8px; margin-bottom: 6px; border-bottom: 1.5px dashed #555; padding-bottom: 5px;
+      display: flex;
+      gap: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px dashed #444;
+      padding-bottom: 8px;
     }
     .student-info-box {
-      flex: 1; border: 1.5px solid #000; padding: 6px 8px; font-size: 11px;
-      display: flex; flex-direction: column; justify-content: center;
+      flex: 1;
+      border: 2px solid #000;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #fafafa;
     }
-    .info-row { margin-bottom: 4px; display: flex; align-items: center; }
-    .info-row span.label { font-weight: bold; width: 75px; color: #222; }
-    .info-row span.val { font-weight: bold; font-size: 13px; color: #000; }
+    .info-row { margin-bottom: 5px; display: flex; align-items: center; }
+    .info-row span.label { font-weight: 800; width: 95px; color: #111; font-size: 12px; }
+    .info-row span.val { font-weight: 800; font-size: 14px; color: #000; }
 
-    .num-grid { display: flex; gap: 6px; font-size: 9px; text-align: center; border: 1.5px solid #000; padding: 3px 6px; }
-    .num-col { display: flex; flex-direction: column; gap: 1.5px; align-items: center; }
-    .num-col-title { font-weight: bold; font-size: 8px; margin-bottom: 1px; }
+    /* 2 Haneli Numara Kodlama (Hazır Doldurulmuş) */
+    .num-grid {
+      display: flex; gap: 8px; font-size: 10px; text-align: center;
+      border: 2px solid #000; padding: 4px 10px; background: #fff;
+    }
+    .num-col { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+    .num-col-title { font-weight: 800; font-size: 9px; margin-bottom: 2px; }
     .bubble {
-      width: 10.5px; height: 10.5px; border: 1px solid #111; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 6.5px;
-      font-weight: bold; color: #111;
+      width: 13px; height: 13px; border: 1.2px solid #111; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 8px;
+      font-weight: 800; color: #111;
     }
     .bubble.filled { background: #000 !important; color: #fff !important; }
 
+    /* Dersler Grid Düzeni (A4'e Rahat Oturan 2 Kolon) */
     .lessons-container {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 8.5px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+      font-size: 10px;
     }
-    .lesson-block { border: 1px solid #333; padding: 3px 4px; border-radius: 2px; }
+    .lesson-block {
+      border: 1.5px solid #222;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: #fff;
+    }
     .lesson-title {
-      font-weight: bold; font-size: 9px; text-align: center;
-      background: #f1f5f9; padding: 2px 0; margin-bottom: 3px; border-bottom: 1px solid #333;
+      font-weight: 800;
+      font-size: 11px;
+      text-align: center;
+      background: #f1f5f9;
+      padding: 3px 0;
+      margin-bottom: 4px;
+      border-bottom: 1.5px solid #222;
+      letter-spacing: 0.3px;
     }
-    .question-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2px; padding: 0 2px; }
-    .q-num { font-weight: bold; font-size: 8px; width: 14px; text-align: right; }
-    .q-bubbles { display: flex; gap: 3.5px; }
+    .question-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+      padding: 0 4px;
+    }
+    .q-num { font-weight: 800; font-size: 9.5px; width: 18px; text-align: right; }
+    .q-bubbles { display: flex; gap: 5px; }
+    .q-bubbles .bubble { width: 14px; height: 14px; font-size: 8.5px; }
 
+    /* Kamera Ekranı */
     #scanner-container { max-width: 500px; margin: 0 auto; text-align: center; }
     #video { width: 100%; border-radius: 8px; background: #000; }
     .result-card {
       background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;
-      padding: 12px; margin-top: 15px; text-align: left;
+      padding: 14px; margin-top: 15px; text-align: left;
     }
 
     @media print {
       body { background: white; padding: 0; }
       .no-print { display: none !important; }
       .print-area { gap: 0; }
-      .sheet-wrapper { box-shadow: none; margin: 0; width: 100%; min-height: 100%; }
+      .sheet-wrapper {
+        box-shadow: none;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        padding: 8mm 12mm;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- KONTROL PANELİ -->
   <div class="panel no-print">
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('print')">📄 1. Kişiye Özel Optik Üret / Yazdır</button>
+      <button class="tab-btn active" onclick="switchTab('print')">📄 1. A4 Optik Üret / Yazdır</button>
       <button class="tab-btn" onclick="switchTab('scan')">📷 2. Kamera ile Optik Oku</button>
     </div>
 
@@ -167,7 +235,7 @@
           <option value="10">10 - Mirşah Uçar (11. Sınıf Eşit Ağırlık)</option>
         </select>
 
-        <button class="action-btn" onclick="window.print()">🖨️ A5 Yazdır</button>
+        <button class="action-btn" onclick="window.print()">🖨️ A4 Yazdır</button>
       </div>
 
       <div style="font-size: 13px; font-weight: bold; margin-top: 10px;">Ders Bazlı Cevap Anahtarı Girişi:</div>
@@ -192,6 +260,7 @@
     </div>
   </div>
 
+  <!-- A4 YAZDIRILACAK FORMLAR -->
   <div class="print-area" id="printArea"></div>
 
   <script>
@@ -342,17 +411,17 @@
 
           <div class="optik-header">
             <div class="optik-title">
-              <h2>${examTitle}</h2>
-              <h4>${student.class} OPTİK CEVAP FORMU</h4>
+              <h1>${examTitle}</h1>
+              <h3>${student.class} OPTİK CEVAP FORMU</h3>
             </div>
             <div class="qr-box" id="${qrId}"></div>
           </div>
 
           <div class="top-section">
             <div class="student-info-box">
-              <div class="info-row"><span class="label">NO:</span> <span class="val">${sNo}</span></div>
-              <div class="info-row"><span class="label">AD SOYAD:</span> <span class="val">${student.name}</span></div>
-              <div class="info-row"><span class="label">SINIFI:</span> <span class="val">${student.class}</span></div>
+              <div class="info-row"><span class="label">ÖĞRENCİ NO:</span> <span class="val">${sNo}</span></div>
+              <div class="info-row"><span class="label">ADI SOYADI:</span> <span class="val">${student.name}</span></div>
+              <div class="info-row"><span class="label">SINIFI / ALANI:</span> <span class="val">${student.class}</span></div>
             </div>
 
             <div class="num-grid">
@@ -373,15 +442,14 @@
         printArea.appendChild(sheet);
 
         const fullKey = getCombinedKey(student.schemaKey);
-        
-        // Kompakt metin (Karakter sayısını azaltarak QR piksellerini kocaman yapar)
         const qrPayload = `KAS|${examTitle}|${sNo}|${student.schemaKey}|${fullKey}`;
 
+        // Ultra Net ve Büyük Karekod (120x120 piksel, Low düzeyi = İri kutular)
         new QRCode(document.getElementById(qrId), {
           text: qrPayload,
-          width: 88,
-          height: 88,
-          correctLevel: QRCode.CorrectLevel.L // Low seviyesi = en iri kareler
+          width: 120,
+          height: 120,
+          correctLevel: QRCode.CorrectLevel.L
         });
       });
     }
@@ -413,8 +481,8 @@
         video.srcObject = videoStream;
         video.setAttribute("playsinline", true);
         video.play();
-        status.innerText = "Kamera aktif. Formdaki QR kodu kameraya gösterin...";
-        scanInterval = setInterval(scanFrame, 250);
+        status.innerText = "Kamera aktif. Formdaki karekodu kameraya tutun...";
+        scanInterval = setInterval(scanFrame, 200);
       } catch (err) {
         status.innerText = "Kamera erişim hatası: " + err.message;
       }
@@ -456,7 +524,7 @@
           }
 
           const student = STUDENTS[sNo] || { name: "Bilinmeyen Talebe", class: "-" };
-          document.getElementById("scanStatus").innerText = `✅ QR Okundu: ${student.name} (${sNo})`;
+          document.getElementById("scanStatus").innerText = `✅ Karekod Okundu: ${student.name} (${sNo})`;
           document.getElementById("scanResultArea").style.display = "block";
           document.getElementById("studentIdentity").innerText = `[${sNo}] ${student.name} - ${student.class}`;
           document.getElementById("scoreSummary").innerText = `Sınav: ${exam} | Doğru: 44 | Yanlış: 4 | Boş: 2 | Net: 43.00`;
