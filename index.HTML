@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - A4 Profesyonel Optik Sistemi</title>
+  <title>KAS Denemeleri - Ders Bazlı A4 Optik Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
@@ -52,7 +52,7 @@
     .print-area { display: flex; flex-direction: column; gap: 20px; }
     .sheet-wrapper {
       width: 210mm; height: 296mm; max-height: 296mm; background: white;
-      margin: 0 auto; padding: 10mm 14mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      margin: 0 auto; padding: 8mm 12mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       position: relative; color: #000; box-sizing: border-box;
       overflow: hidden; page-break-after: always; page-break-inside: avoid;
     }
@@ -60,79 +60,83 @@
 
     /* 4 KÖŞE NİŞANGAHLARI */
     .target-marker { position: absolute; width: 14mm; height: 14mm; z-index: 5; }
-    .tm-tl { top: 5mm; left: 5mm; }
-    .tm-tr { top: 5mm; right: 5mm; }
-    .tm-bl { bottom: 5mm; left: 5mm; }
-    .tm-br { bottom: 5mm; right: 5mm; }
+    .tm-tl { top: 4mm; left: 4mm; }
+    .tm-tr { top: 4mm; right: 4mm; }
+    .tm-bl { bottom: 4mm; left: 4mm; }
+    .tm-br { bottom: 4mm; right: 4mm; }
 
     .optik-header {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px;
+      border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 6px;
       padding-right: 24mm;
     }
-    .optik-title h1 { margin: 0; font-size: 21px; font-weight: 800; }
-    .optik-title h3 { margin: 3px 0 0 0; font-size: 13px; font-weight: 600; color: #333; }
+    .optik-title h1 { margin: 0; font-size: 20px; font-weight: 800; }
+    .optik-title h3 { margin: 2px 0 0 0; font-size: 12px; font-weight: 600; color: #333; }
     
     .qr-box {
-      width: 105px; height: 105px; background: #fff; padding: 3px;
+      width: 95px; height: 95px; background: #fff; padding: 2px;
       display: flex; align-items: center; justify-content: center;
       border: 2px solid #000; border-radius: 4px;
     }
 
     .top-section {
-      display: flex; gap: 14px; margin-bottom: 10px; border-bottom: 2px solid #000; padding-bottom: 8px;
+      display: flex; gap: 12px; margin-bottom: 8px; border-bottom: 2px solid #000; padding-bottom: 6px;
     }
     .student-info-box {
-      flex: 1; border: 1.5px solid #000; padding: 8px 12px; font-size: 12px;
+      flex: 1; border: 1.5px solid #000; padding: 6px 10px; font-size: 11.5px;
       display: flex; flex-direction: column; justify-content: center; background: #fafafa;
     }
-    .info-row { margin-bottom: 4px; display: flex; align-items: center; }
-    .info-row span.label { font-weight: 800; width: 95px; color: #111; font-size: 11.5px; }
-    .info-row span.val { font-weight: 800; font-size: 13.5px; color: #000; }
+    .info-row { margin-bottom: 3px; display: flex; align-items: center; }
+    .info-row span.label { font-weight: 800; width: 90px; color: #111; font-size: 11px; }
+    .info-row span.val { font-weight: 800; font-size: 13px; color: #000; }
 
     .num-grid {
-      display: flex; gap: 8px; font-size: 10px; text-align: center;
-      border: 1.5px solid #000; padding: 4px 10px; background: #fff;
+      display: flex; gap: 6px; font-size: 9.5px; text-align: center;
+      border: 1.5px solid #000; padding: 3px 8px; background: #fff;
     }
-    .num-col { display: flex; flex-direction: column; gap: 2px; align-items: center; }
-    .num-col-title { font-weight: 800; font-size: 9px; margin-bottom: 2px; }
+    .num-col { display: flex; flex-direction: column; gap: 1.5px; align-items: center; }
+    .num-col-title { font-weight: 800; font-size: 8.5px; margin-bottom: 1px; }
     .bubble {
-      width: 13px; height: 13px; border: 1.2px solid #111; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 8px;
+      width: 12px; height: 12px; border: 1.2px solid #111; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 7.5px;
       font-weight: 800; color: #111;
     }
     .bubble.filled { background: #000 !important; color: #fff !important; }
 
-    /* ================= YENİ TEMİZ CEVAP FORMU (ÖSYM STANDARDI) ================= */
-    .omr-main-card {
-      border: 2px solid #000; background: #fff; margin-top: 4px;
+    /* ================= DERS DERS AYRILMIŞ ÖSYM FORMATI ================= */
+    .omr-main-layout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     }
-    .omr-card-header {
-      text-align: center; font-weight: 800; font-size: 13px; letter-spacing: 2px;
-      background: #f1f5f9; padding: 4px 0; border-bottom: 2px solid #000;
+    .omr-column {
+      display: flex; flex-direction: column; gap: 8px;
     }
-    .omr-columns-wrapper {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 8px 14px;
+    .omr-lesson-card {
+      border: 1.5px solid var(--omr-red); border-radius: 4px; overflow: hidden; background: #fff;
     }
-    .omr-col-box {
-      border: 1.5px solid var(--omr-red); padding: 4px 6px; border-radius: 2px;
+    .omr-lesson-header {
+      background: #fee2e2; color: #991b1b; font-weight: 800; font-size: 10.5px;
+      padding: 3px 6px; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1.2px solid var(--omr-red); letter-spacing: 0.3px;
+    }
+    .omr-lesson-body {
+      padding: 2px 4px;
     }
     .omr-row {
       display: flex; align-items: center; justify-content: space-between;
-      height: 7.6mm; border-bottom: 1px solid #f1f5f9;
+      height: 6.8mm; border-bottom: 1px solid #f8fafc;
     }
-    .omr-row:nth-child(even) { background: #fdf2f2; }
+    .omr-row:nth-child(even) { background: #fff5f5; }
     .omr-q-num {
-      width: 22px; font-weight: 800; font-size: 12px; text-align: center; color: #000;
-      border-right: 1.5px solid var(--omr-red); margin-right: 6px;
+      width: 18px; font-weight: 800; font-size: 11px; text-align: center; color: #000;
+      border-right: 1.2px solid var(--omr-red); margin-right: 4px;
     }
     .omr-bubbles-grp {
-      display: flex; justify-content: space-between; flex: 1; padding: 0 6px;
+      display: flex; justify-content: space-between; flex: 1; padding: 0 4px;
     }
     .omr-bubble {
-      width: 5.6mm; height: 5.6mm; border: 1.5px solid var(--omr-red); border-radius: 50%;
+      width: 5.2mm; height: 5.2mm; border: 1.3px solid var(--omr-red); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 800; color: #000; background: #fff;
+      font-size: 9.5px; font-weight: 800; color: #000; background: #fff;
     }
 
     /* ================= KAMERA ARAYÜZÜ ================= */
@@ -187,7 +191,7 @@
       .no-print { display: none !important; }
       .print-area { display: flex !important; gap: 0; }
       .sheet-wrapper {
-        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 10mm 14mm;
+        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 8mm 12mm;
       }
     }
   </style>
@@ -245,7 +249,7 @@
       <div class="keys-grid" id="keysInputsArea"></div>
     </div>
 
-    <!-- 2. TAM OTOMATİK OKUYUCU (ALTTA ASLA OPTİK GÖZÜKMEZ) -->
+    <!-- 2. TAM OTOMATİK OKUYUCU (KAMERA AÇILINCA ALTAKİ OPTİKLER GİZLENİR) -->
     <div id="tab-scan" style="display:none;">
       <div class="step-banner">
         <div class="step-item active" id="stepIndicator1">1. AŞAMA: Karekodu Okut</div>
@@ -289,7 +293,6 @@
   <div class="print-area" id="printArea"></div>
 
   <script>
-    // DEV GOOGLE APPS SCRIPT URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/dev";
 
     const TARGET_SVG = `
@@ -413,7 +416,7 @@
       return combined;
     }
 
-    // ================= GÖNDERDİĞİNİZ ÖRNEK GİBİ 2 SÜTUNLU 50 SORULUK OPTİK ÜRETİMİ =================
+    // ================= DERS DERS AYRILMIŞ KIRMIZI OPTİK FORMLAR =================
     function generateSheets() {
       const selected = document.getElementById("studentSelect").value;
       const examTitle = document.getElementById("examTitle").value;
@@ -424,6 +427,7 @@
 
       studentKeys.forEach(sNo => {
         const student = STUDENTS[sNo];
+        const lessons = SCHEMAS[student.schemaKey];
         const tensDigit = parseInt(sNo[0]);
         const onesDigit = parseInt(sNo[1]);
 
@@ -431,35 +435,49 @@
         sheet.className = "sheet-wrapper";
         const qrId = `qr_${sNo}`;
 
-        // 1-25 Sol Sütun, 26-50 Sağ Sütun
-        let col1Rows = "";
-        let col2Rows = "";
-        for (let q = 1; q <= 25; q++) {
-          col1Rows += `
-            <div class="omr-row" data-q="${q}">
-              <div class="omr-q-num">${q}</div>
-              <div class="omr-bubbles-grp">
-                <span class="omr-bubble" data-opt="A">A</span>
-                <span class="omr-bubble" data-opt="B">B</span>
-                <span class="omr-bubble" data-opt="C">C</span>
-                <span class="omr-bubble" data-opt="D">D</span>
-                <span class="omr-bubble" data-opt="E">E</span>
+        // Dersleri 2 sütuna dengeli paylaştırma
+        let col1Html = "";
+        let col2Html = "";
+        let currentQuestionGlobal = 1;
+
+        // Toplam soru sayısına göre yarı yarıya böl
+        let col1Questions = 0;
+        const totalQ = lessons.reduce((sum, l) => sum + l.count, 0);
+        const halfQ = Math.ceil(totalQ / 2);
+
+        lessons.forEach(l => {
+          let rowsHtml = "";
+          for (let i = 1; i <= l.count; i++) {
+            rowsHtml += `
+              <div class="omr-row" data-gq="${currentQuestionGlobal}">
+                <div class="omr-q-num">${i}</div>
+                <div class="omr-bubbles-grp">
+                  <span class="omr-bubble">A</span>
+                  <span class="omr-bubble">B</span>
+                  <span class="omr-bubble">C</span>
+                  <span class="omr-bubble">D</span>
+                  <span class="omr-bubble">E</span>
+                </div>
+              </div>`;
+            currentQuestionGlobal++;
+          }
+
+          const cardHtml = `
+            <div class="omr-lesson-card">
+              <div class="omr-lesson-header">
+                <span>${l.name}</span>
+                <span>(${l.count} Soru)</span>
               </div>
+              <div class="omr-lesson-body">${rowsHtml}</div>
             </div>`;
-        }
-        for (let q = 26; q <= 50; q++) {
-          col2Rows += `
-            <div class="omr-row" data-q="${q}">
-              <div class="omr-q-num">${q}</div>
-              <div class="omr-bubbles-grp">
-                <span class="omr-bubble" data-opt="A">A</span>
-                <span class="omr-bubble" data-opt="B">B</span>
-                <span class="omr-bubble" data-opt="C">C</span>
-                <span class="omr-bubble" data-opt="D">D</span>
-                <span class="omr-bubble" data-opt="E">E</span>
-              </div>
-            </div>`;
-        }
+
+          if (col1Questions < halfQ) {
+            col1Html += cardHtml;
+            col1Questions += l.count;
+          } else {
+            col2Html += cardHtml;
+          }
+        });
 
         let tensBubbles = "";
         let onesBubbles = "";
@@ -469,7 +487,7 @@
         }
 
         sheet.innerHTML = `
-          <!-- 4 HASSAS NİŞANGAH -->
+          <!-- 4 ADET NİŞANGAH -->
           <div class="target-marker tm-tl">${TARGET_SVG}</div>
           <div class="target-marker tm-tr">${TARGET_SVG}</div>
           <div class="target-marker tm-bl">${TARGET_SVG}</div>
@@ -502,13 +520,10 @@
             </div>
           </div>
 
-          <!-- DÜZENLİ CEVAP FORMU (KIRMIZI BALONCUKLAR & ÇERÇEVELER) -->
-          <div class="omr-main-card">
-            <div class="omr-card-header">CEVAP FORMU (50 SORU)</div>
-            <div class="omr-columns-wrapper">
-              <div class="omr-col-box">${col1Rows}</div>
-              <div class="omr-col-box">${col2Rows}</div>
-            </div>
+          <!-- DERS DERS AYRILMIŞ 2 SÜTUNLU DÜZEN -->
+          <div class="omr-main-layout">
+            <div class="omr-column">${col1Html}</div>
+            <div class="omr-column">${col2Html}</div>
           </div>
         `;
 
@@ -519,14 +534,14 @@
 
         new QRCode(document.getElementById(qrId), {
           text: qrPayload,
-          width: 98,
-          height: 98,
+          width: 90,
+          height: 90,
           correctLevel: QRCode.CorrectLevel.L
         });
       });
     }
 
-    // ================= SEKME DEĞİŞİMİNDE BASKI ALANINI GİZLEME =================
+    // ================= SEKME DEĞİŞİMİ: KAMERADA FORM ASLA GÖRÜNMEZ =================
     function switchTab(tab) {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
       const printArea = document.getElementById("printArea");
@@ -535,17 +550,17 @@
         document.querySelectorAll(".tab-btn")[0].classList.add("active");
         document.getElementById("tab-print").style.display = "block";
         document.getElementById("tab-scan").style.display = "none";
-        printArea.style.display = "flex"; // Yazdırma sekmesinde göster
+        printArea.style.display = "flex";
         stopScanner();
       } else {
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
         document.getElementById("tab-print").style.display = "none";
         document.getElementById("tab-scan").style.display = "block";
-        printArea.style.display = "none"; // KAMERA SEKMESİNDE ASLA ÇIKMAZ
+        printArea.style.display = "none"; // KAMERADA KESİNLİKLE GİZLİ
       }
     }
 
-    // ================= KAMERA MOTORU & TEMİZ MATRİS OKUYUCU =================
+    // ================= KAMERA MOTORU & DERS BAZLI OMR =================
     let videoStream = null;
     let scanInterval = null;
     let currentStep = 1;
@@ -648,7 +663,7 @@
             if (navigator.vibrate) navigator.vibrate([70, 50, 70]);
             document.getElementById("scanStatus").innerText = "⚡ Form işleniyor, şıklar taranıyor...";
             setTimeout(() => {
-              evaluateCleanOMR(canvas, ctx);
+              evaluateBranchOMR(canvas, ctx);
             }, 100);
           }
         } else {
@@ -685,8 +700,8 @@
       return (tl && tr) || (bl && br) || (tl && br) || (tr && bl);
     }
 
-    // ================= 2 SÜTUNLU TEMİZ MATRİS BALONCUK ANALİZİ =================
-    function evaluateCleanOMR(canvas, ctx) {
+    // ================= DERS BAZLI AYRILMIŞ ŞIK ANALİZİ =================
+    function evaluateBranchOMR(canvas, ctx) {
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
       const lessons = SCHEMAS[lvl];
@@ -699,7 +714,7 @@
       let detectedAnswers = [];
       const formLeft = Math.floor(w * 0.15);
       const formRight = Math.floor(w * 0.85);
-      const formTop = Math.floor(h * 0.35); // 1. ve 26. soruların dikey başlangıcı
+      const formTop = Math.floor(h * 0.35);
       const formBottom = Math.floor(h * 0.88);
 
       const col1XStart = formLeft + (formRight - formLeft) * 0.08;
@@ -707,21 +722,21 @@
       const col2XStart = formLeft + (formRight - formLeft) * 0.54;
       const col2XEnd = formRight - (formRight - formLeft) * 0.08;
 
-      const rowHeight = (formBottom - formTop) / 25;
+      const totalQ = lessons.reduce((sum, l) => sum + l.count, 0);
+      const halfQ = Math.ceil(totalQ / 2);
+      const rowHeight = (formBottom - formTop) / halfQ;
 
-      // 50 Soruyu sırayla tara (1-25 Sol sütun, 26-50 Sağ sütun)
-      for (let q = 1; q <= 50; q++) {
-        const isCol2 = q > 25;
-        const qIdxInCol = isCol2 ? (q - 26) : (q - 1);
+      for (let q = 1; q <= totalQ; q++) {
+        const isCol2 = q > halfQ;
+        const qIdxInCol = isCol2 ? (q - halfQ - 1) : (q - 1);
         const curY = formTop + (qIdxInCol * rowHeight) + (rowHeight * 0.5);
 
         const curXStart = isCol2 ? col2XStart : col1XStart;
         const curXEnd = isCol2 ? col2XEnd : col1XEnd;
-        const bubbleAreaWidth = curXEnd - curXStart;
-        const bubbleStep = bubbleAreaWidth / 5;
+        const bubbleStep = (curXEnd - curXStart) / 5;
 
         const options = ["A", "B", "C", "D", "E"];
-        let darkestOpt = "B"; // Boş
+        let darkestOpt = "B";
         let maxDarkness = 0;
 
         options.forEach((opt, optIdx) => {
@@ -746,29 +761,34 @@
         detectedAnswers.push(darkestOpt);
       }
 
-      // Branş bazlı puan ve net hesabı
+      // Ders ders detay raporu oluşturma
       let studentAnswersStr = detectedAnswers.join("");
       let totalD = 0, totalY = 0, totalB = 0;
       let totalWeightedNetPoints = 0;
       let qPointer = 0;
+      let branchReportHtml = "<div style='margin-top:6px; font-size:12px;'>";
 
       lessons.forEach(l => {
+        let bD = 0, bY = 0, bB = 0;
         for (let i = 0; i < l.count; i++) {
           const ans = detectedAnswers[qPointer] || "B";
           const correctChoice = masterKey[qPointer] || "X";
 
           if (ans === "B" || ans === "X") {
-            totalB++;
+            bB++; totalB++;
           } else if (ans === correctChoice) {
-            totalD++;
+            bD++; totalD++;
             totalWeightedNetPoints += l.weight;
           } else {
-            totalY++;
+            bY++; totalY++;
             totalWeightedNetPoints -= (l.weight / 4);
           }
           qPointer++;
         }
+        const bNet = bD - (bY / 4);
+        branchReportHtml += `<div>• <strong>${l.name}:</strong> ${bD}D ${bY}Y ${bB}B (Net: ${bNet.toFixed(2)})</div>`;
       });
+      branchReportHtml += "</div>";
 
       const totalNet = totalD - (totalY / 4);
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
@@ -779,10 +799,11 @@
       document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class})`;
       document.getElementById("scoreSummary").innerHTML = `
         <strong>Sınav:</strong> ${activeExamData.exam}<br>
-        <strong>Doğru:</strong> ${totalD} | <strong>Yanlış:</strong> ${totalY} | <strong>Boş:</strong> ${totalB}<br>
-        <strong>Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Puanı:</strong> ${finalScore.toFixed(2)}
+        <strong>Toplam Doğru:</strong> ${totalD} | <strong>Yanlış:</strong> ${totalY} | <strong>Boş:</strong> ${totalB}<br>
+        <strong>Toplam Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Tabanlı Puan:</strong> ${finalScore.toFixed(2)}
+        ${branchReportHtml}
       `;
-      document.getElementById("detailedAnswers").innerText = `Cevaplar: ${studentAnswersStr}`;
+      document.getElementById("detailedAnswers").innerText = `Cevap Dizilimi: ${studentAnswersStr}`;
       document.getElementById("scanStatus").innerHTML = `🎉 <strong>Okundu! E-Tabloya aktarılıyor...</strong>`;
 
       sendToGoogleSheetReliable({
