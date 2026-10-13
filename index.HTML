@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - Ders Bazlı A4 Optik Sistemi</title>
+  <title>KAS Denemeleri - Profesyonel A4 OMR Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
       --primary: #1e3a8a;
       --success: #15803d;
-      --border-color: #222;
-      --omr-red: #dc2626;
+      --omr-red: #b91c1c;
+      --omr-bg-sub: #fef2f2;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
     body { margin: 0; padding: 12px; background: #f8fafc; color: #0f172a; }
@@ -51,15 +51,15 @@
     @page { size: A4 portrait; margin: 0; }
     .print-area { display: flex; flex-direction: column; gap: 20px; }
     .sheet-wrapper {
-      width: 210mm; height: 296mm; max-height: 296mm; background: white;
-      margin: 0 auto; padding: 8mm 12mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      width: 210mm; height: 297mm; max-height: 297mm; background: white;
+      margin: 0 auto; padding: 16mm 18mm 14mm 18mm; box-shadow: 0 4px 12px rgba(0,0,0,0.12);
       position: relative; color: #000; box-sizing: border-box;
       overflow: hidden; page-break-after: always; page-break-inside: avoid;
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
-    /* 4 KÖŞE NİŞANGAHLARI */
-    .target-marker { position: absolute; width: 14mm; height: 14mm; z-index: 5; }
+    /* NİŞANGAHLAR: 4 KÖŞEDEN TAM GÜVENLİ MESAFEDE */
+    .target-marker { position: absolute; width: 12mm; height: 12mm; z-index: 10; }
     .tm-tl { top: 4mm; left: 4mm; }
     .tm-tr { top: 4mm; right: 4mm; }
     .tm-bl { bottom: 4mm; left: 4mm; }
@@ -67,76 +67,71 @@
 
     .optik-header {
       display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 6px;
-      padding-right: 24mm;
+      border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 6px;
     }
-    .optik-title h1 { margin: 0; font-size: 20px; font-weight: 800; }
-    .optik-title h3 { margin: 2px 0 0 0; font-size: 12px; font-weight: 600; color: #333; }
+    .optik-title h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
+    .optik-title h3 { margin: 2px 0 0 0; font-size: 11.5px; font-weight: 600; color: #444; }
     
     .qr-box {
-      width: 95px; height: 95px; background: #fff; padding: 2px;
+      width: 82px; height: 82px; background: #fff; padding: 2px;
       display: flex; align-items: center; justify-content: center;
-      border: 2px solid #000; border-radius: 4px;
+      border: 1.5px solid #000; border-radius: 4px;
     }
 
     .top-section {
-      display: flex; gap: 12px; margin-bottom: 8px; border-bottom: 2px solid #000; padding-bottom: 6px;
+      display: flex; gap: 10px; margin-bottom: 8px; border-bottom: 1.5px solid #000; padding-bottom: 6px;
     }
     .student-info-box {
-      flex: 1; border: 1.5px solid #000; padding: 6px 10px; font-size: 11.5px;
+      flex: 1; border: 1.5px solid #000; padding: 5px 8px; font-size: 11px;
       display: flex; flex-direction: column; justify-content: center; background: #fafafa;
     }
-    .info-row { margin-bottom: 3px; display: flex; align-items: center; }
-    .info-row span.label { font-weight: 800; width: 90px; color: #111; font-size: 11px; }
-    .info-row span.val { font-weight: 800; font-size: 13px; color: #000; }
+    .info-row { margin-bottom: 2px; display: flex; align-items: center; }
+    .info-row span.label { font-weight: 800; width: 85px; color: #111; font-size: 10.5px; }
+    .info-row span.val { font-weight: 800; font-size: 12.5px; color: #000; }
 
     .num-grid {
-      display: flex; gap: 6px; font-size: 9.5px; text-align: center;
-      border: 1.5px solid #000; padding: 3px 8px; background: #fff;
+      display: flex; gap: 6px; font-size: 9px; text-align: center;
+      border: 1.5px solid #000; padding: 2px 6px; background: #fff;
     }
-    .num-col { display: flex; flex-direction: column; gap: 1.5px; align-items: center; }
-    .num-col-title { font-weight: 800; font-size: 8.5px; margin-bottom: 1px; }
+    .num-col { display: flex; flex-direction: column; gap: 1px; align-items: center; }
+    .num-col-title { font-weight: 800; font-size: 8px; margin-bottom: 1px; }
     .bubble {
-      width: 12px; height: 12px; border: 1.2px solid #111; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 7.5px;
+      width: 10.5px; height: 10.5px; border: 1px solid #111; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 7px;
       font-weight: 800; color: #111;
     }
     .bubble.filled { background: #000 !important; color: #fff !important; }
 
-    /* ================= DERS DERS AYRILMIŞ ÖSYM FORMATI ================= */
-    .omr-main-layout {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    /* ================= 25 + 25 GEOMETRİK SABİT MATRİS ================= */
+    .omr-grid-container {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      border: 1.5px solid #000; padding: 4px 6px; background: #fff;
     }
-    .omr-column {
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .omr-lesson-card {
-      border: 1.5px solid var(--omr-red); border-radius: 4px; overflow: hidden; background: #fff;
-    }
-    .omr-lesson-header {
-      background: #fee2e2; color: #991b1b; font-weight: 800; font-size: 10.5px;
-      padding: 3px 6px; display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1.2px solid var(--omr-red); letter-spacing: 0.3px;
-    }
-    .omr-lesson-body {
-      padding: 2px 4px;
+    .omr-col {
+      display: flex; flex-direction: column; gap: 1px;
     }
     .omr-row {
-      display: flex; align-items: center; justify-content: space-between;
-      height: 6.8mm; border-bottom: 1px solid #f8fafc;
+      display: flex; align-items: center; height: 6.9mm;
+      border-bottom: 1px solid #f1f5f9; padding: 0 4px;
     }
-    .omr-row:nth-child(even) { background: #fff5f5; }
+    .omr-row.sub-start {
+      border-top: 1.2px solid var(--omr-red);
+    }
+    .omr-sub-tag {
+      font-size: 7.5px; font-weight: 800; color: var(--omr-red); width: 36px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
     .omr-q-num {
-      width: 18px; font-weight: 800; font-size: 11px; text-align: center; color: #000;
-      border-right: 1.2px solid var(--omr-red); margin-right: 4px;
+      width: 16px; font-weight: 800; font-size: 10.5px; text-align: center;
+      border-right: 1.2px solid var(--omr-red); margin-right: 6px;
     }
-    .omr-bubbles-grp {
+    .omr-bubbles {
       display: flex; justify-content: space-between; flex: 1; padding: 0 4px;
     }
-    .omr-bubble {
-      width: 5.2mm; height: 5.2mm; border: 1.3px solid var(--omr-red); border-radius: 50%;
+    .omr-circle {
+      width: 5.1mm; height: 5.1mm; border: 1.2px solid var(--omr-red); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 9.5px; font-weight: 800; color: #000; background: #fff;
+      font-size: 9px; font-weight: 800; color: #000; background: #fff;
     }
 
     /* ================= KAMERA ARAYÜZÜ ================= */
@@ -164,17 +159,17 @@
     }
 
     #omr-guide {
-      position: absolute; width: 82%; aspect-ratio: 210 / 297; max-height: 92%;
-      border: 2.5px solid rgba(34, 197, 94, 0.7); border-radius: 6px; pointer-events: none;
-      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+      position: absolute; width: 84%; aspect-ratio: 210 / 297; max-height: 94%;
+      border: 2px solid rgba(34, 197, 94, 0.7); border-radius: 4px; pointer-events: none;
+      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     #omr-guide.locked {
-      border: 3.5px solid #22c55e !important;
-      box-shadow: 0 0 25px #22c55e inset, 0 0 0 9999px rgba(0, 0, 0, 0.55) !important;
+      border: 3px solid #22c55e !important;
+      box-shadow: 0 0 25px #22c55e inset, 0 0 0 9999px rgba(0, 0, 0, 0.6) !important;
     }
     .guide-target {
-      position: absolute; width: 26px; height: 26px; border: 2.5px solid #22c55e; border-radius: 50%;
+      position: absolute; width: 22px; height: 22px; border: 2.5px solid #22c55e; border-radius: 50%;
     }
     .gt-tl { top: -2px; left: -2px; }
     .gt-tr { top: -2px; right: -2px; }
@@ -191,7 +186,7 @@
       .no-print { display: none !important; }
       .print-area { display: flex !important; gap: 0; }
       .sheet-wrapper {
-        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 8mm 12mm;
+        box-shadow: none; margin: 0; width: 100vw; height: 100vh; max-height: 100vh; padding: 16mm 18mm 14mm 18mm;
       }
     }
   </style>
@@ -249,7 +244,7 @@
       <div class="keys-grid" id="keysInputsArea"></div>
     </div>
 
-    <!-- 2. TAM OTOMATİK OKUYUCU (KAMERA AÇILINCA ALTAKİ OPTİKLER GİZLENİR) -->
+    <!-- 2. TAM OTOMATİK OKUYUCU (KAMERADA FORM ASLA GÖRÜNMEZ) -->
     <div id="tab-scan" style="display:none;">
       <div class="step-banner">
         <div class="step-item active" id="stepIndicator1">1. AŞAMA: Karekodu Okut</div>
@@ -289,19 +284,19 @@
     </div>
   </div>
 
-  <!-- A4 BASKI ALANI (Kamerada tamamen gizlenir) -->
   <div class="print-area" id="printArea"></div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/dev";
 
+    // İnce, hassas nişangah SVG (Merkezi 1 piksel nokta)
     const TARGET_SVG = `
-      <svg viewBox="0 0 50 50" width="100%" height="100%">
-        <circle cx="25" cy="25" r="22" stroke="black" stroke-width="3" fill="none" />
-        <circle cx="25" cy="25" r="12" stroke="black" stroke-width="2.5" fill="none" />
-        <circle cx="25" cy="25" r="5" fill="black" />
-        <line x1="25" y1="0" x2="25" y2="50" stroke="black" stroke-width="2" />
-        <line x1="0" y1="25" x2="50" y2="25" stroke="black" stroke-width="2" />
+      <svg viewBox="0 0 40 40" width="100%" height="100%">
+        <circle cx="20" cy="20" r="16" stroke="black" stroke-width="2" fill="none" />
+        <circle cx="20" cy="20" r="8" stroke="black" stroke-width="1.5" fill="none" />
+        <circle cx="20" cy="20" r="3" fill="black" />
+        <line x1="20" y1="0" x2="20" y2="40" stroke="black" stroke-width="1.5" />
+        <line x1="0" y1="20" x2="40" y2="20" stroke="black" stroke-width="1.5" />
       </svg>
     `;
 
@@ -320,7 +315,7 @@
 
     const SCHEMAS = {
       "9": [
-        { name: "TÜRK DİLİ VE EDEBİYATI", count: 10, key: "edebiyat", weight: 9.0 },
+        { name: "EDEBİYAT", count: 10, key: "edebiyat", weight: 9.0 },
         { name: "TARİH", count: 5, key: "tarih", weight: 6.0 },
         { name: "COĞRAFYA", count: 5, key: "cografya", weight: 6.0 },
         { name: "MATEMATİK", count: 10, key: "matematik", weight: 10.0 },
@@ -329,7 +324,7 @@
         { name: "BİYOLOJİ", count: 6, key: "biyoloji", weight: 8.0 }
       ],
       "10": [
-        { name: "TÜRK DİLİ VE EDEBİYATI", count: 10, key: "edebiyat", weight: 9.0 },
+        { name: "EDEBİYAT", count: 10, key: "edebiyat", weight: 9.0 },
         { name: "TARİH", count: 5, key: "tarih", weight: 6.0 },
         { name: "COĞRAFYA", count: 5, key: "cografya", weight: 6.0 },
         { name: "MATEMATİK", count: 10, key: "matematik", weight: 10.0 },
@@ -344,7 +339,7 @@
         { name: "BİYOLOJİ", count: 10, key: "biyoloji", weight: 6.0 }
       ],
       "11_EA": [
-        { name: "TÜRK DİLİ VE EDEBİYATI", count: 15, key: "edebiyat", weight: 10.0 },
+        { name: "EDEBİYAT", count: 15, key: "edebiyat", weight: 10.0 },
         { name: "TARİH", count: 8, key: "tarih", weight: 6.5 },
         { name: "COĞRAFYA", count: 7, key: "cografya", weight: 6.0 },
         { name: "MATEMATİK", count: 20, key: "matematik", weight: 7.8 }
@@ -416,7 +411,7 @@
       return combined;
     }
 
-    // ================= DERS DERS AYRILMIŞ KIRMIZI OPTİK FORMLAR =================
+    // ================= İZOLE NİŞANGAHLI & SABİT GEOMETRİLİ A4 BASKI =================
     function generateSheets() {
       const selected = document.getElementById("studentSelect").value;
       const examTitle = document.getElementById("examTitle").value;
@@ -435,49 +430,36 @@
         sheet.className = "sheet-wrapper";
         const qrId = `qr_${sNo}`;
 
-        // Dersleri 2 sütuna dengeli paylaştırma
-        let col1Html = "";
-        let col2Html = "";
-        let currentQuestionGlobal = 1;
-
-        // Toplam soru sayısına göre yarı yarıya böl
-        let col1Questions = 0;
-        const totalQ = lessons.reduce((sum, l) => sum + l.count, 0);
-        const halfQ = Math.ceil(totalQ / 2);
-
+        // Soru - Ders Eşleme Haritası
+        let questionMap = [];
         lessons.forEach(l => {
-          let rowsHtml = "";
           for (let i = 1; i <= l.count; i++) {
-            rowsHtml += `
-              <div class="omr-row" data-gq="${currentQuestionGlobal}">
-                <div class="omr-q-num">${i}</div>
-                <div class="omr-bubbles-grp">
-                  <span class="omr-bubble">A</span>
-                  <span class="omr-bubble">B</span>
-                  <span class="omr-bubble">C</span>
-                  <span class="omr-bubble">D</span>
-                  <span class="omr-bubble">E</span>
-                </div>
-              </div>`;
-            currentQuestionGlobal++;
-          }
-
-          const cardHtml = `
-            <div class="omr-lesson-card">
-              <div class="omr-lesson-header">
-                <span>${l.name}</span>
-                <span>(${l.count} Soru)</span>
-              </div>
-              <div class="omr-lesson-body">${rowsHtml}</div>
-            </div>`;
-
-          if (col1Questions < halfQ) {
-            col1Html += cardHtml;
-            col1Questions += l.count;
-          } else {
-            col2Html += cardHtml;
+            questionMap.push({ lesson: l.name, qInLesson: i, isFirst: i === 1 });
           }
         });
+
+        // 1-25 Sol Sütun, 26-50 Sağ Sütun
+        let col1Html = "";
+        let col2Html = "";
+
+        for (let q = 1; q <= 50; q++) {
+          const info = questionMap[q - 1] || { lesson: "-", qInLesson: q, isFirst: false };
+          const rowHtml = `
+            <div class="omr-row ${info.isFirst ? 'sub-start' : ''}" data-q="${q}">
+              <div class="omr-sub-tag">${info.isFirst ? info.lesson : ''}</div>
+              <div class="omr-q-num">${info.qInLesson}</div>
+              <div class="omr-bubbles">
+                <span class="omr-circle">A</span>
+                <span class="omr-circle">B</span>
+                <span class="omr-circle">C</span>
+                <span class="omr-circle">D</span>
+                <span class="omr-circle">E</span>
+              </div>
+            </div>`;
+          
+          if (q <= 25) col1Html += rowHtml;
+          else col2Html += rowHtml;
+        }
 
         let tensBubbles = "";
         let onesBubbles = "";
@@ -487,7 +469,7 @@
         }
 
         sheet.innerHTML = `
-          <!-- 4 ADET NİŞANGAH -->
+          <!-- 4 ADET İZOLE NİŞANGAH (ETRAFI TERTEMİZ BEYAZ) -->
           <div class="target-marker tm-tl">${TARGET_SVG}</div>
           <div class="target-marker tm-tr">${TARGET_SVG}</div>
           <div class="target-marker tm-bl">${TARGET_SVG}</div>
@@ -520,10 +502,10 @@
             </div>
           </div>
 
-          <!-- DERS DERS AYRILMIŞ 2 SÜTUNLU DÜZEN -->
-          <div class="omr-main-layout">
-            <div class="omr-column">${col1Html}</div>
-            <div class="omr-column">${col2Html}</div>
+          <!-- SABİT GEOMETRİLİ VE DERS AYRIMLI 50 SORULUK MATRİS -->
+          <div class="omr-grid-container">
+            <div class="omr-col">${col1Html}</div>
+            <div class="omr-col">${col2Html}</div>
           </div>
         `;
 
@@ -534,14 +516,14 @@
 
         new QRCode(document.getElementById(qrId), {
           text: qrPayload,
-          width: 90,
-          height: 90,
+          width: 78,
+          height: 78,
           correctLevel: QRCode.CorrectLevel.L
         });
       });
     }
 
-    // ================= SEKME DEĞİŞİMİ: KAMERADA FORM ASLA GÖRÜNMEZ =================
+    // ================= SEKME DEĞİŞİMİ =================
     function switchTab(tab) {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
       const printArea = document.getElementById("printArea");
@@ -556,11 +538,11 @@
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
         document.getElementById("tab-print").style.display = "none";
         document.getElementById("tab-scan").style.display = "block";
-        printArea.style.display = "none"; // KAMERADA KESİNLİKLE GİZLİ
+        printArea.style.display = "none"; // KAMERADA FORMLAR ASLA ÇIKMAZ
       }
     }
 
-    // ================= KAMERA MOTORU & DERS BAZLI OMR =================
+    // ================= KAMERA MOTORU & HASSAS GEOMETRİK ANALİZ =================
     let videoStream = null;
     let scanInterval = null;
     let currentStep = 1;
@@ -663,7 +645,7 @@
             if (navigator.vibrate) navigator.vibrate([70, 50, 70]);
             document.getElementById("scanStatus").innerText = "⚡ Form işleniyor, şıklar taranıyor...";
             setTimeout(() => {
-              evaluateBranchOMR(canvas, ctx);
+              evaluatePreciseOMR(canvas, ctx);
             }, 100);
           }
         } else {
@@ -682,26 +664,26 @@
         const cx = Math.floor(w * rx);
         const cy = Math.floor(h * ry);
         let dark = 0;
-        for (let y = -6; y <= 6; y += 2) {
-          for (let x = -6; x <= 6; x += 2) {
+        for (let y = -5; y <= 5; y += 2) {
+          for (let x = -5; x <= 5; x += 2) {
             const idx = ((cy + y) * w + (cx + x)) * 4;
             const b = (data[idx] + data[idx+1] + data[idx+2]) / 3;
             if (b < 100) dark++;
           }
         }
-        return dark > 15;
+        return dark > 12;
       };
 
-      const tl = isTargetCenter(0.14, 0.12);
-      const tr = isTargetCenter(0.86, 0.12);
-      const bl = isTargetCenter(0.14, 0.88);
-      const br = isTargetCenter(0.86, 0.88);
+      const tl = isTargetCenter(0.12, 0.10);
+      const tr = isTargetCenter(0.88, 0.10);
+      const bl = isTargetCenter(0.12, 0.90);
+      const br = isTargetCenter(0.88, 0.90);
 
       return (tl && tr) || (bl && br) || (tl && br) || (tr && bl);
     }
 
-    // ================= DERS BAZLI AYRILMIŞ ŞIK ANALİZİ =================
-    function evaluateBranchOMR(canvas, ctx) {
+    // ================= MİLİMETRİK ŞAŞMAYAN OMR BALONCUK ANALİZİ =================
+    function evaluatePreciseOMR(canvas, ctx) {
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
       const lessons = SCHEMAS[lvl];
@@ -712,23 +694,21 @@
       const data = imgData.data;
 
       let detectedAnswers = [];
-      const formLeft = Math.floor(w * 0.15);
-      const formRight = Math.floor(w * 0.85);
-      const formTop = Math.floor(h * 0.35);
-      const formBottom = Math.floor(h * 0.88);
+      const formLeft = Math.floor(w * 0.14);
+      const formRight = Math.floor(w * 0.86);
+      const formTop = Math.floor(h * 0.33);
+      const formBottom = Math.floor(h * 0.89);
 
-      const col1XStart = formLeft + (formRight - formLeft) * 0.08;
+      const col1XStart = formLeft + (formRight - formLeft) * 0.09;
       const col1XEnd = formLeft + (formRight - formLeft) * 0.46;
       const col2XStart = formLeft + (formRight - formLeft) * 0.54;
-      const col2XEnd = formRight - (formRight - formLeft) * 0.08;
+      const col2XEnd = formRight - (formRight - formLeft) * 0.09;
 
-      const totalQ = lessons.reduce((sum, l) => sum + l.count, 0);
-      const halfQ = Math.ceil(totalQ / 2);
-      const rowHeight = (formBottom - formTop) / halfQ;
+      const rowHeight = (formBottom - formTop) / 25;
 
-      for (let q = 1; q <= totalQ; q++) {
-        const isCol2 = q > halfQ;
-        const qIdxInCol = isCol2 ? (q - halfQ - 1) : (q - 1);
+      for (let q = 1; q <= 50; q++) {
+        const isCol2 = q > 25;
+        const qIdxInCol = isCol2 ? (q - 26) : (q - 1);
         const curY = formTop + (qIdxInCol * rowHeight) + (rowHeight * 0.5);
 
         const curXStart = isCol2 ? col2XStart : col1XStart;
@@ -744,15 +724,15 @@
           const bY = Math.floor(curY);
 
           let darkCount = 0;
-          for (let dy = -6; dy <= 6; dy += 2) {
-            for (let dx = -6; dx <= 6; dx += 2) {
+          for (let dy = -5; dy <= 5; dy += 2) {
+            for (let dx = -5; dx <= 5; dx += 2) {
               const pIdx = ((bY + dy) * w + (bX + dx)) * 4;
               const brightness = (data[pIdx] + data[pIdx+1] + data[pIdx+2]) / 3;
               if (brightness < 105) darkCount++;
             }
           }
 
-          if (darkCount > maxDarkness && darkCount > 12) {
+          if (darkCount > maxDarkness && darkCount > 10) {
             maxDarkness = darkCount;
             darkestOpt = opt;
           }
@@ -761,7 +741,6 @@
         detectedAnswers.push(darkestOpt);
       }
 
-      // Ders ders detay raporu oluşturma
       let studentAnswersStr = detectedAnswers.join("");
       let totalD = 0, totalY = 0, totalB = 0;
       let totalWeightedNetPoints = 0;
@@ -794,7 +773,6 @@
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
       const student = STUDENTS[activeExamData.sNo] || { name: "Bilinmeyen Talebe", class: "-" };
 
-      // Sonucu Göster
       document.getElementById("scanResultArea").style.display = "block";
       document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class})`;
       document.getElementById("scoreSummary").innerHTML = `
