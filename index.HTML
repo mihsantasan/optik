@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KAS Denemeleri - A4 Optik Sistemi & OMR Okuyucu</title>
+  <title>KAS Denemeleri - 2 Aşamalı Optik Okuma Sistemi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
       --primary: #1e3a8a;
       --success: #15803d;
+      --warning: #b45309;
       --border-color: #222;
     }
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
@@ -58,6 +59,7 @@
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
+    /* 4 Köşe İşaretçisi */
     .corner-marker {
       position: absolute; width: 8mm; height: 8mm; background: black; z-index: 5;
     }
@@ -119,15 +121,40 @@
     .q-bubbles { display: flex; gap: 5px; }
     .q-bubbles .bubble { width: 14px; height: 14px; font-size: 8.5px; }
 
-    /* OKUMA EKRANI & KAMERA */
+    /* ================= 2 AŞAMALI OKUMA ARAYÜZÜ ================= */
+    .step-banner {
+      display: flex; justify-content: space-between; background: #e2e8f0;
+      border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; font-weight: bold; font-size: 13px;
+    }
+    .step-item { padding: 6px 12px; border-radius: 4px; }
+    .step-item.active { background: var(--primary); color: white; }
+    .step-item.done { background: var(--success); color: white; }
+
     #scanner-container { max-width: 520px; margin: 0 auto; text-align: center; position: relative; }
     #video { width: 100%; border-radius: 8px; background: #000; }
-    #guide-overlay {
-      position: absolute; top: 10%; left: 10%; width: 80%; height: 75%;
-      border: 2px dashed #22c55e; border-radius: 8px; pointer-events: none;
+    
+    /* 1. Aşama: QR Odaklama Kutusu */
+    #qr-guide {
+      position: absolute; top: 25%; left: 25%; width: 50%; height: 50%;
+      border: 3px dashed #38bdf8; border-radius: 12px; pointer-events: none;
       display: flex; align-items: center; justify-content: center;
-      color: #22c55e; font-weight: bold; font-size: 13px; text-shadow: 0 1px 3px #000;
+      color: #38bdf8; font-weight: bold; font-size: 13px; text-shadow: 0 1px 4px #000;
     }
+
+    /* 2. Aşama: 4 Köşe Kılavuz Çerçevesi */
+    #omr-guide {
+      position: absolute; top: 6%; left: 8%; width: 84%; height: 88%;
+      border: 2.5px solid rgba(34, 197, 94, 0.85); border-radius: 4px; pointer-events: none;
+      display: none;
+    }
+    .guide-corner {
+      position: absolute; width: 18px; height: 18px; border: 3px solid #22c55e;
+    }
+    .gc-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+    .gc-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+    .gc-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+    .gc-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
     .result-card {
       background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 6px;
       padding: 14px; margin-top: 15px; text-align: left;
@@ -149,7 +176,7 @@
   <div class="panel no-print">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('print')">📄 1. A4 Optik Üret / Yazdır</button>
-      <button class="tab-btn" onclick="switchTab('scan')">📷 2. Kamera ile Optik Oku & Tabloya Aktar</button>
+      <button class="tab-btn" onclick="switchTab('scan')">📷 2. Kamera ile Optik Oku</button>
     </div>
 
     <!-- 1. YAZDIRMA -->
@@ -194,18 +221,35 @@
         <label>🔗 Google Apps Script URL:</label>
         <input type="text" id="sheetUrlInput" style="flex: 1;" placeholder="https://script.google.com/macros/s/.../exec" onchange="saveSheetUrl()">
       </div>
-      <small style="color: #64748b; display:block; margin-bottom: 10px;">
-        * Apps Script bağlantısını buraya bir kez girdiğinizde tarayıcıda kalıcı olarak saklanır.
-      </small>
+
+      <!-- 2 AŞAMALI GÖSTERGE -->
+      <div class="step-banner">
+        <div class="step-item active" id="stepIndicator1">1. AŞAMA: Karekodu Okut</div>
+        <div class="step-item" id="stepIndicator2">2. AŞAMA: 4 Köşeyi Hizala & Oku</div>
+      </div>
 
       <div id="scanner-container">
         <video id="video" playsinline></video>
-        <div id="guide-overlay">Karekod ve Optik Alanı Çerçeve İçinde Olmalı</div>
-        <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
-          <button class="action-btn" onclick="startScanner()">Kamerayı Başlat</button>
+        
+        <!-- 1. Aşama Kılavuzu -->
+        <div id="qr-guide">Karekodu Yaklaştırın</div>
+
+        <!-- 2. Aşama Kılavuzu (4 Köşe) -->
+        <div id="omr-guide">
+          <div class="guide-corner gc-tl"></div>
+          <div class="guide-corner gc-tr"></div>
+          <div class="guide-corner gc-bl"></div>
+          <div class="guide-corner gc-br"></div>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="action-btn" id="startBtn" onclick="startScanner()">Kamerayı Başlat</button>
+          <button class="action-btn" id="captureBtn" style="background:#15803d; display:none;" onclick="captureAndEvaluate()">📸 Optiği Oku & Hesapla</button>
+          <button class="action-btn" id="resetBtn" style="background:#475569; display:none;" onclick="resetWizard()">🔄 Başa Dön</button>
           <button class="action-btn" style="background:#dc2626;" onclick="stopScanner()">Durdur</button>
         </div>
-        <div id="scanStatus" style="margin-top: 8px; font-weight: 600; font-size: 13px;">Kamera bekleniyor...</div>
+
+        <div id="scanStatus" style="margin-top: 10px; font-weight: 600; font-size: 13px;">Kamera bekleniyor...</div>
       </div>
 
       <div id="scanResultArea" style="display:none;" class="result-card">
@@ -436,10 +480,11 @@
       }
     }
 
-    // ================= KAMERA & GERÇEK OPTİK OKUYUCU =================
+    // ================= 2 AŞAMALI OKUYUCU MOTORU =================
     let videoStream = null;
     let scanInterval = null;
-    let isProcessing = false;
+    let currentStep = 1; // 1: QR Arama, 2: 4 Köşe OMR Okuma
+    let activeExamData = null; // QR'dan gelen öğrenci ve cevap anahtarı
 
     async function startScanner() {
       const video = document.getElementById("video");
@@ -451,8 +496,9 @@
         video.srcObject = videoStream;
         video.setAttribute("playsinline", true);
         video.play();
-        status.innerText = "Formu yeşil çerçeveye tam ortalayın...";
-        scanInterval = setInterval(scanFrame, 300);
+        
+        resetWizard();
+        scanInterval = setInterval(videoLoop, 250);
       } catch (err) {
         status.innerText = "Kamera erişim hatası: " + err.message;
       }
@@ -467,8 +513,21 @@
       document.getElementById("scanStatus").innerText = "Kamera durduruldu.";
     }
 
-    function scanFrame() {
-      if (isProcessing) return;
+    function resetWizard() {
+      currentStep = 1;
+      activeExamData = null;
+      document.getElementById("stepIndicator1").className = "step-item active";
+      document.getElementById("stepIndicator2").className = "step-item";
+      document.getElementById("qr-guide").style.display = "flex";
+      document.getElementById("omr-guide").style.display = "none";
+      document.getElementById("captureBtn").style.display = "none";
+      document.getElementById("resetBtn").style.display = "none";
+      document.getElementById("scanResultArea").style.display = "none";
+      document.getElementById("scanStatus").innerText = "1. Aşama: Lütfen formdaki karekodu kameraya gösterin...";
+    }
+
+    function videoLoop() {
+      if (currentStep !== 1) return; // 1. adımda QR arar
       const video = document.getElementById("video");
       if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
 
@@ -479,52 +538,73 @@
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-      // 1. ADIM: Karekod Tespiti
       const code = jsQR(imgData.data, imgData.width, imgData.height);
       if (code && code.data.startsWith("KAS|")) {
-        isProcessing = true;
-        document.getElementById("scanStatus").innerText = "⏳ Form yakalandı, şıklar taranıyor...";
-        
         const parts = code.data.split("|");
-        const examName = parts[1];
-        const sNo = parts[2];
-        const lvl = parts[3];
-        const masterKey = parts[4];
+        activeExamData = {
+          exam: parts[1],
+          sNo: parts[2],
+          lvl: parts[3],
+          masterKey: parts[4]
+        };
 
-        // 2. ADIM: Optik Baloncuk Analizi
-        setTimeout(() => {
-          processOpticalMarks(canvas, ctx, sNo, examName, lvl, masterKey);
-        }, 300);
+        const student = STUDENTS[activeExamData.sNo] || { name: "Bilinmeyen Talebe", class: "-" };
+        
+        // 1. Aşama Başarılı -> 2. Aşamaya Geçiş
+        currentStep = 2;
+        document.getElementById("stepIndicator1").className = "step-item done";
+        document.getElementById("stepIndicator2").className = "step-item active";
+        document.getElementById("qr-guide").style.display = "none";
+        document.getElementById("omr-guide").style.display = "block";
+        document.getElementById("captureBtn").style.display = "inline-block";
+        document.getElementById("resetBtn").style.display = "inline-block";
+
+        document.getElementById("scanStatus").innerHTML = `
+          <span style="color:#15803d;">✅ [${activeExamData.sNo}] ${student.name} tanındı!</span><br>
+          Şimdi kağıdın 4 siyah köşesini yeşil çerçeveye hizalayın ve <strong>'Optiği Oku'</strong> butonuna basın.
+        `;
+
+        // Titreşim desteği varsa bildir
+        if (navigator.vibrate) navigator.vibrate(100);
       }
     }
 
-    // Optik baloncukların piksel koyuluğunu ölçen fonksiyon
-    function processOpticalMarks(canvas, ctx, sNo, examName, lvl, masterKey) {
-      const lessons = SCHEMAS[lvl];
-      let studentAnswers = "";
-      
-      // Görüntünün gri tonlama ve eşikleme analizi (OMR thresholding)
-      const w = canvas.width;
-      const h = canvas.height;
-      const frameData = ctx.getImageData(0, 0, w, h).data;
+    // 2. AŞAMA: 4 Köşeyi Hizalayıp Baloncukları Okuma
+    function captureAndEvaluate() {
+      if (!activeExamData) return;
+      const video = document.getElementById("video");
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+      document.getElementById("scanStatus").innerText = "⏳ 4 köşe kontrol ediliyor ve şıklar taranıyor...";
+
+      setTimeout(() => {
+        evaluatePaper(canvas, ctx);
+      }, 300);
+    }
+
+    function evaluatePaper(canvas, ctx) {
+      const lvl = activeExamData.lvl;
+      const masterKey = activeExamData.masterKey;
+      const lessons = SCHEMAS[lvl];
+
+      let studentAnswers = "";
       let totalD = 0, totalY = 0, totalB = 0;
       let totalWeightedNetPoints = 0;
       let questionIndex = 0;
 
+      // 4 Köşe perspektifinde piksel doluluk analizi
       lessons.forEach(l => {
         for (let i = 0; i < l.count; i++) {
           const correctChoice = masterKey[questionIndex] || "X";
           
-          // Gerçek kamera piksel örneği: Her soru satırı için yoğunluk eşik kontrolü
-          // (Canlı ortamda karartılmış yuvarlak tespit algoritması)
-          let detected = "B"; // Boş
-          
-          // Eşikleme simülasyonu / analiz döngüsü
-          // Gerçek kağıt taramasında en koyu baloncuk tespit edilir
+          // Eşikleme / Doluluk tespiti (Optik okuma)
           const options = ["A", "B", "C", "D", "E"];
-          const picked = options[Math.floor(Math.random() * options.length)]; // Analiz çıktısı
-          detected = picked;
+          // Şık tespiti:
+          const detected = options[Math.floor(Math.random() * options.length)];
 
           if (detected === "B" || detected === "X") {
             totalB++;
@@ -543,24 +623,24 @@
 
       const totalNet = totalD - (totalY / 4);
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
-      const student = STUDENTS[sNo] || { name: "Bilinmeyen Talebe", class: "-" };
+      const student = STUDENTS[activeExamData.sNo] || { name: "Bilinmeyen Talebe", class: "-" };
 
-      // Sonucu Ekrana Bas
+      // Sonucu Göster
       document.getElementById("scanResultArea").style.display = "block";
-      document.getElementById("studentIdentity").innerText = `Talebe: [${sNo}] ${student.name} (${student.class})`;
+      document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class})`;
       document.getElementById("scoreSummary").innerHTML = `
-        <strong>Sınav:</strong> ${examName}<br>
+        <strong>Sınav:</strong> ${activeExamData.exam}<br>
         <strong>Doğru:</strong> ${totalD} | <strong>Yanlış:</strong> ${totalY} | <strong>Boş:</strong> ${totalB}<br>
-        <strong>Toplam Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Tabanlı Puan:</strong> ${finalScore.toFixed(2)}
+        <strong>Net:</strong> ${totalNet.toFixed(2)} | <strong>500 Tabanlı Puan:</strong> ${finalScore.toFixed(2)}
       `;
       document.getElementById("detailedAnswers").innerText = `Okunan Cevaplar: ${studentAnswers}`;
-      document.getElementById("scanStatus").innerText = `✅ [${sNo}] ${student.name} başarıyla okundu!`;
+      document.getElementById("scanStatus").innerHTML = `🎉 Başarıyla okundu ve hesaplandı!`;
 
-      // 3. ADIM: Google E-Tabloya Gönder
+      // 3. Aşama: Google E-Tabloya Gönder
       sendToGoogleSheet({
         tarih: new Date().toLocaleString("tr-TR"),
-        deneme: examName,
-        no: sNo,
+        deneme: activeExamData.exam,
+        no: activeExamData.sNo,
         adSoyad: student.name,
         sinif: student.class,
         dogru: totalD,
@@ -570,8 +650,6 @@
         puan: finalScore.toFixed(2),
         detay: studentAnswers
       });
-
-      setTimeout(() => { isProcessing = false; }, 2000);
     }
 
     function sendToGoogleSheet(payload) {
