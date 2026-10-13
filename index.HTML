@@ -68,7 +68,10 @@
     .key-input { text-transform: uppercase; letter-spacing: 2px; font-weight: bold; font-family: monospace; }
 
     /* ================= A4 BASKI STİLLERİ ================= */
-    @page { size: A4 portrait; margin: 0; }
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
     .print-area { display: flex; flex-direction: column; gap: 20px; }
     .sheet-wrapper {
       width: 210mm; height: 297mm; max-height: 297mm; background: white;
@@ -78,22 +81,22 @@
     }
     .sheet-wrapper:last-child { page-break-after: auto; }
 
-    /* NİŞANGAHLAR: 4 KÖŞE */
-    .target-marker { position: absolute; width: 12mm; height: 12mm; z-index: 10; }
-    .tm-tl { top: 4mm; left: 4mm; }
-    .tm-tr { top: 4mm; right: 4mm; }
-    .tm-bl { bottom: 4mm; left: 4mm; }
-    .tm-br { bottom: 4mm; right: 4mm; }
+    /* NİŞANGAHLAR: 4 KÖŞE SAĞLAM L-KÖŞE ÇİZGİLERİ (SİYAH-BEYAZ BASKI İÇİN) */
+    .target-marker { position: absolute; width: 14mm; height: 14mm; z-index: 10; }
+    .tm-tl { top: 5mm; left: 5mm; }
+    .tm-tr { top: 5mm; right: 5mm; }
+    .tm-bl { bottom: 5mm; left: 5mm; }
+    .tm-br { bottom: 5mm; right: 5mm; }
 
     .optik-header {
       display: flex; justify-content: space-between; align-items: center;
       border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 6px;
     }
-    .optik-title h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: 0.5px; }
-    .optik-title h3 { margin: 2px 0 0 0; font-size: 11px; font-weight: 700; color: #333; }
+    .optik-title h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
+    .optik-title h3 { margin: 2px 0 0 0; font-size: 11px; font-weight: 700; color: #111; }
     
     .qr-box {
-      width: 80px; height: 80px; background: #fff; padding: 2px;
+      width: 78px; height: 78px; background: #fff; padding: 2px;
       display: flex; align-items: center; justify-content: center;
       border: 1.5px solid #000; border-radius: 4px;
     }
@@ -116,39 +119,71 @@
     .num-col { display: flex; flex-direction: column; gap: 1px; align-items: center; }
     .num-col-title { font-weight: 800; font-size: 8px; margin-bottom: 1px; }
     .bubble {
-      width: 10.5px; height: 10.5px; border: 1px solid #111; border-radius: 50%;
+      width: 10.5px; height: 10.5px; border: 1.2px solid #000; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 7px;
-      font-weight: 800; color: #111;
+      font-weight: 800; color: #000;
     }
     .bubble.filled { background: #000 !important; color: #fff !important; }
 
-    /* ================= 25 + 25 GEOMETRİK MATRİS ================= */
+    /* ================= 25 + 25 GEOMETRİK MATRİS (ZEBRA ÇİZGİLİ SİYAH-BEYAZ CEVAP FORMU) ================= */
+    .omr-title-bar {
+      text-align: center; font-weight: 900; font-size: 11px; letter-spacing: 2px;
+      color: #000; padding: 2.5px 0; border: 1.5px solid #000; border-bottom: none;
+      background: #f8fafc; text-transform: uppercase;
+    }
     .omr-grid-container {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-      border: 1.5px solid #000; padding: 4px 6px; background: #fff;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      border: 1.5px solid #000; padding: 4px; background: #fff;
     }
-    .omr-col { display: flex; flex-direction: column; gap: 1px; }
+    .omr-col {
+      display: flex; flex-direction: column; border: 1px solid #000;
+    }
     .omr-row {
-      display: flex; align-items: center; height: 6.9mm;
-      border-bottom: 1px solid #f1f5f9; padding: 0 4px;
+      display: flex; align-items: center; height: 7.2mm;
+      border-bottom: 1px solid #cbd5e1; padding: 0 4px;
     }
-    .omr-row.sub-start { border-top: 1.2px solid var(--omr-red); }
+    .omr-row:last-child {
+      border-bottom: none;
+    }
+    /* Siyah-Beyaz Baskıya Uygun Zebra Çizgilendirme: Çift satırlar açık gri, tek satırlar beyaz */
+    .omr-row:nth-child(even) {
+      background: #f1f5f9;
+    }
+    .omr-row:nth-child(odd) {
+      background: #ffffff;
+    }
+    .omr-row.sub-start {
+      border-top: 2px solid #000;
+    }
     .omr-sub-tag {
-      font-size: 7.5px; font-weight: 800; color: var(--omr-red); width: 36px;
+      font-size: 7.5px; font-weight: 900; color: #000; width: 38px;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .omr-q-num {
-      width: 16px; font-weight: 800; font-size: 10.5px; text-align: center;
-      border-right: 1.2px solid var(--omr-red); margin-right: 6px;
+      width: 18px; font-weight: 900; font-size: 10.5px; text-align: center;
+      border-right: 1.5px solid #000; margin-right: 6px; color: #000;
     }
-    .omr-bubbles { display: flex; justify-content: space-between; flex: 1; padding: 0 4px; }
+    .omr-bubbles {
+      display: flex; justify-content: space-between; flex: 1; padding: 0 4px;
+    }
     .omr-circle {
-      width: 5.1mm; height: 5.1mm; border: 1.2px solid var(--omr-red); border-radius: 50%;
+      width: 5.2mm; height: 5.2mm; border: 1.3px solid #000; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 9px; font-weight: 800; color: #000; background: #fff;
+      font-size: 8.5px; font-weight: 900; color: #000; background: #fff;
     }
 
     /* ================= KAMERA & OKUMA ARAYÜZÜ ================= */
+    .step-banner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      background: #e2e8f0; border-radius: 8px; padding: 6px; margin-bottom: 12px; font-weight: bold; font-size: 13px;
+    }
+    .step-item {
+      padding: 8px 12px; border-radius: 6px; text-align: center; color: #475569;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .step-item.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(30,58,138,0.25); }
+    .step-item.done { background: var(--success); color: white; }
+
     #scanner-container {
       max-width: 520px; width: 100%; margin: 0 auto; text-align: center; position: relative;
       background: #000; border-radius: 10px; overflow: hidden;
@@ -165,35 +200,90 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       color: #38bdf8; font-weight: 800; font-size: 14px; text-shadow: 0 2px 4px #000;
       background: rgba(56, 189, 248, 0.12);
+      animation: pulseGuide 1.8s infinite alternate;
+    }
+    @keyframes pulseGuide {
+      0% { border-color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+      100% { border-color: #0284c7; box-shadow: 0 0 20px rgba(2, 132, 199, 0.6); }
     }
 
-    /* Aşama 2: Tam A4 Optik Form Kılavuzu */
+    /* Aşama 2: A4 Optik Form Kılavuzu & 4 Köşe L-Braketleri */
     #omr-guide {
       position: absolute; width: 84%; aspect-ratio: 210 / 297; max-height: 94%;
-      border: 3px solid #22c55e; border-radius: 6px; pointer-events: none;
-      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+      border: 1.5px dashed rgba(255, 255, 255, 0.4); border-radius: 4px; pointer-events: none;
+      display: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65);
+      transition: all 0.25s ease;
     }
-    .guide-target {
-      position: absolute; width: 22px; height: 22px; border: 2.5px solid #22c55e; border-radius: 50%;
+    #omr-guide.aligned {
+      border: 2.5px solid #22c55e !important;
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.5) inset, 0 0 0 9999px rgba(0, 0, 0, 0.7) !important;
     }
-    .gt-tl { top: -2px; left: -2px; }
-    .gt-tr { top: -2px; right: -2px; }
-    .gt-bl { bottom: -2px; left: -2px; }
-    .gt-br { bottom: -2px; right: -2px; }
+
+    /* 4 Köşede L-Braket Kılavuzları */
+    .guide-bracket {
+      position: absolute; width: 32px; height: 32px; pointer-events: none;
+      transition: all 0.15s ease;
+    }
+    .gb-tl { top: -2px; left: -2px; border-top: 4px solid #facc15; border-left: 4px solid #facc15; }
+    .gb-tr { top: -2px; right: -2px; border-top: 4px solid #facc15; border-right: 4px solid #facc15; }
+    .gb-bl { bottom: -2px; left: -2px; border-bottom: 4px solid #facc15; border-left: 4px solid #facc15; }
+    .gb-br { bottom: -2px; right: -2px; border-bottom: 4px solid #facc15; border-right: 4px solid #facc15; }
+
+    .guide-bracket.locked {
+      border-color: #22c55e !important;
+      box-shadow: 0 0 12px #22c55e;
+      transform: scale(1.1);
+    }
+
+    /* Canlı Kılavuz Hizalama Durum Çubuğu */
+    .guide-status-bar {
+      position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.88); color: #fff; padding: 5px 14px;
+      border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap;
+      display: flex; align-items: center; gap: 8px; border: 1.5px solid #475569; z-index: 25;
+    }
+    .corner-dots {
+      display: flex; gap: 5px; align-items: center;
+    }
+    .corner-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: #ef4444; border: 1px solid #fff;
+      display: inline-block; transition: background 0.15s;
+    }
+    .corner-dot.ok {
+      background: #22c55e !important;
+      box-shadow: 0 0 6px #22c55e;
+    }
     
     .guide-center-line {
-      position: absolute; top: 22%; left: 8%; right: 8%; bottom: 18%;
-      border: 1px dashed rgba(255,255,255,0.4); border-radius: 4px; pointer-events: none;
+      position: absolute; top: 22%; left: 6%; right: 6%; bottom: 10%;
+      border: 1px dashed rgba(255,255,255,0.35); border-radius: 4px; pointer-events: none;
     }
     .guide-center-split {
-      position: absolute; top: 22%; bottom: 18%; left: 50%; width: 1px;
-      border-left: 1px dashed rgba(255,255,255,0.4); pointer-events: none;
+      position: absolute; top: 22%; bottom: 10%; left: 50%; width: 1px;
+      border-left: 1px dashed rgba(255,255,255,0.35); pointer-events: none;
     }
 
+    /* Hazırlık Sayacı Rozeti */
+    #countdownOverlay {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.85); color: #fde047; padding: 6px 14px;
+      border-radius: 20px; font-weight: 800; font-size: 14px;
+      display: none; border: 1.5px solid #facc15; z-index: 20;
+    }
+
+    /* Öğrenci Bilgi Şeridi */
+    #detectedStudentBanner {
+      display: none; background: #dcfce7; border: 1.5px solid #86efac;
+      color: #14532d; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;
+      font-size: 13px; font-weight: 700; text-align: center;
+    }
+
+    /* Kontrol Butonları Alanı */
     .scanner-controls {
-      margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center;
+      margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
     }
 
+    /* Sonuç Kartı & Detaylı İnceleme */
     .result-card {
       background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px;
       padding: 16px; margin-top: 16px; text-align: left;
@@ -202,7 +292,9 @@
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
       border-bottom: 1.5px solid #e2e8f0; padding-bottom: 8px;
     }
-    .score-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .score-badge-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;
+    }
     .score-badge {
       padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 13px;
       display: inline-flex; align-items: center; gap: 4px;
@@ -213,11 +305,14 @@
     .sb-blank { background: #f1f5f9; color: #475569; }
     .sb-score { background: #fef08a; color: #854d0e; }
 
+    /* İnteraktif Soru Matrisi */
     .matrix-container {
       margin-top: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;
       max-height: 260px; overflow-y: auto;
     }
-    .matrix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 6px; }
+    .matrix-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 6px;
+    }
     .matrix-item {
       border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 11px;
       display: flex; justify-content: space-between; align-items: center; cursor: pointer;
@@ -243,7 +338,7 @@
 </head>
 <body>
 
-  <!-- KONTROL PANELİ -->
+  <!-- KONTROL PANELİ (YALNIZCA EKRANDA GÖRÜNÜR) -->
   <div class="panel no-print">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('print')">📄 1. A4 Optik Üret / Yazdır</button>
@@ -328,19 +423,28 @@
       <div id="scanner-container">
         <video id="video" playsinline></video>
         
-        <!-- Aşama 1: Karekod Kılavuzu -->
+        <!-- Aşama 1: Karekod Kılavuzu (Karekod modunda gösterilir) -->
         <div id="qr-guide">
           <div style="font-size: 28px; margin-bottom: 4px;">🎯</div>
           <div>KAREKODU BURAYA TUTUN</div>
           <small style="font-size: 11px; font-weight: normal; color: #bae6fd; margin-top: 4px;">Kağıdın sağ üst köşesindeki karekod</small>
         </div>
 
-        <!-- Aşama 2: Tam A4 Optik Form Kılavuzu -->
+        <!-- Aşama 2: Tam A4 Optik Form Kılavuzu & 4 Köşe L-Braketleri -->
         <div id="omr-guide">
-          <div class="guide-target gt-tl"></div>
-          <div class="guide-target gt-tr"></div>
-          <div class="guide-target gt-bl"></div>
-          <div class="guide-target gt-br"></div>
+          <div class="guide-status-bar" id="guideStatusBar">
+            <span id="guideStatusText">📐 4 Köşeyi Hizalayın</span>
+            <div class="corner-dots">
+              <span class="corner-dot" id="dot-tl" title="Sol Üst"></span>
+              <span class="corner-dot" id="dot-tr" title="Sağ Üst"></span>
+              <span class="corner-dot" id="dot-bl" title="Sol Alt"></span>
+              <span class="corner-dot" id="dot-br" title="Sağ Alt"></span>
+            </div>
+          </div>
+          <div class="guide-bracket gb-tl" id="gb-tl"></div>
+          <div class="guide-bracket gb-tr" id="gb-tr"></div>
+          <div class="guide-bracket gb-bl" id="gb-bl"></div>
+          <div class="guide-bracket gb-br" id="gb-br"></div>
           <div class="guide-center-line"></div>
           <div class="guide-center-split"></div>
         </div>
@@ -423,16 +527,29 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBmRdu_lVQY4OjfK3vCEKzvvnYRBFzocgMxuwcqKC2/dev";
 
-    const TARGET_SVG = `
+    // 4 Köşe Kalın L-Braket SVG'leri (Siyah-Beyaz Baskı & Hizalama İçin)
+    const BRACKET_TL = `
       <svg viewBox="0 0 40 40" width="100%" height="100%">
-        <circle cx="20" cy="20" r="16" stroke="black" stroke-width="2" fill="none" />
-        <circle cx="20" cy="20" r="8" stroke="black" stroke-width="1.5" fill="none" />
-        <circle cx="20" cy="20" r="3" fill="black" />
-        <line x1="20" y1="0" x2="20" y2="40" stroke="black" stroke-width="1.5" />
-        <line x1="0" y1="20" x2="40" y2="20" stroke="black" stroke-width="1.5" />
+        <polyline points="38,6 6,6 6,38" fill="none" stroke="black" stroke-width="5" stroke-linecap="square" />
+      </svg>
+    `;
+    const BRACKET_TR = `
+      <svg viewBox="0 0 40 40" width="100%" height="100%">
+        <polyline points="2,6 34,6 34,38" fill="none" stroke="black" stroke-width="5" stroke-linecap="square" />
+      </svg>
+    `;
+    const BRACKET_BL = `
+      <svg viewBox="0 0 40 40" width="100%" height="100%">
+        <polyline points="6,2 6,34 38,34" fill="none" stroke="black" stroke-width="5" stroke-linecap="square" />
+      </svg>
+    `;
+    const BRACKET_BR = `
+      <svg viewBox="0 0 40 40" width="100%" height="100%">
+        <polyline points="34,2 34,34 2,34" fill="none" stroke="black" stroke-width="5" stroke-linecap="square" />
       </svg>
     `;
 
+    // Sabit Öğrenci Listesi
     const STUDENTS = {
       "01": { name: "İBRAHİM TOPRAK", class: "9. SINIF", schemaKey: "9" },
       "02": { name: "MUHAMMED EMİN KESKİN", class: "9. SINIF", schemaKey: "9" },
@@ -446,6 +563,7 @@
       "10": { name: "MİRŞAH UÇAR", class: "11. SINIF EŞİT AĞIRLIK", schemaKey: "11_EA" }
     };
 
+    // Müfredat ve Branş Dağılımları (Toplamı Tam 50 Soru)
     const SCHEMAS = {
       "9": [
         { name: "EDEBİYAT", count: 10, key: "edebiyat", weight: 9.0 },
@@ -481,6 +599,7 @@
 
     let answerKeysStore = { "9": {}, "10": {}, "11_SAY": {}, "11_EA": {} };
 
+    // Basit Ses Synthesizer (Harici dosya gerektirmez, %100 çevrimdışı çalışır)
     const audioCtx = window.AudioContext ? new (window.AudioContext || window.webkitAudioContext)() : null;
     function playBeep(type) {
       if (!audioCtx) return;
@@ -492,24 +611,37 @@
         gain.connect(audioCtx.destination);
 
         if (type === 'qr') {
-          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08);
+          // Başarılı Karekod Sesi (İki tık yükselen melodi)
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
           gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
           osc.start();
           osc.stop(audioCtx.currentTime + 0.25);
         } else if (type === 'omr') {
-          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-          osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+          // Başarılı OMR Taraması (Kutlama akoru)
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+          osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
           gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
           osc.start();
           osc.stop(audioCtx.currentTime + 0.45);
+        } else if (type === 'lock') {
+          // 4 Köşe Kilitlendiğinde Hızlı Başarı Tıklaması
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.05); // A5
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.16);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.16);
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Ses çalınamadı:", e);
+      }
     }
 
+    // ================= CEVAP ANAHTARI YÖNETİMİ =================
     function saveKeysToCloud() {
       localStorage.setItem("kas_saved_keys", JSON.stringify(answerKeysStore));
       alert("✅ Cevap anahtarları yerel tarayıcı belleğine kaydedildi!");
@@ -527,6 +659,7 @@
       }
     }
 
+    // Hızlı Test İçin Örnek Anahtar Doldurma Butonu
     function fillSampleKeys() {
       const lvl = document.getElementById("examLevel").value;
       const lessons = SCHEMAS[lvl];
@@ -590,6 +723,7 @@
       return combined;
     }
 
+    // ================= A4 BASKI FORMLARINI OLUŞTURMA =================
     function generateSheets() {
       const selected = document.getElementById("studentSelect").value;
       const examTitle = document.getElementById("examTitle").value;
@@ -608,6 +742,7 @@
         sheet.className = "sheet-wrapper";
         const qrId = `qr_${sNo}`;
 
+        // Soru - Ders Eşleme Haritası
         let questionMap = [];
         lessons.forEach(l => {
           for (let i = 1; i <= l.count; i++) {
@@ -615,6 +750,7 @@
           }
         });
 
+        // 1-25 Sol Sütun, 26-50 Sağ Sütun
         let col1Html = "";
         let col2Html = "";
 
@@ -645,10 +781,11 @@
         }
 
         sheet.innerHTML = `
-          <div class="target-marker tm-tl">${TARGET_SVG}</div>
-          <div class="target-marker tm-tr">${TARGET_SVG}</div>
-          <div class="target-marker tm-bl">${TARGET_SVG}</div>
-          <div class="target-marker tm-br">${TARGET_SVG}</div>
+          <!-- 4 ADET SAĞLAM L-KÖŞE NİŞANGAHI (SİYAH-BEYAZ BASKI & NET HİZALAMA İÇİN) -->
+          <div class="target-marker tm-tl">${BRACKET_TL}</div>
+          <div class="target-marker tm-tr">${BRACKET_TR}</div>
+          <div class="target-marker tm-bl">${BRACKET_BL}</div>
+          <div class="target-marker tm-br">${BRACKET_BR}</div>
 
           <div class="optik-header">
             <div class="optik-title">
@@ -677,6 +814,8 @@
             </div>
           </div>
 
+          <!-- SİYAH-BEYAZ ZEBRA ÇİZGİLİ CEVAP FORMU (25 SOL + 25 SAĞ) -->
+          <div class="omr-title-bar">CEVAP FORMU</div>
           <div class="omr-grid-container">
             <div class="omr-col">${col1Html}</div>
             <div class="omr-col">${col2Html}</div>
@@ -697,6 +836,7 @@
       });
     }
 
+    // ================= SEKME DEĞİŞTİRME =================
     function switchTab(tab) {
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
       const printArea = document.getElementById("printArea");
@@ -711,18 +851,21 @@
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
         document.getElementById("tab-print").style.display = "none";
         document.getElementById("tab-scan").style.display = "block";
-        printArea.style.display = "none";
+        printArea.style.display = "none"; // Tarama esnasında formlar ekranda gizlenir
       }
     }
 
     // ================= KAMERA MOTORU & KULLANICI KONTROLLÜ OMR =================
     let videoStream = null;
     let scanInterval = null;
-    let currentStep = 1;
+    let currentStep = 1; // 1: QR Okutma / Öğrenci Seçimi, 2: A4 Hizalama ve Otomatik Okuma, 3: Tamamlandı
     let activeExamData = null;
     let currentStudentAnswers = [];
     let currentTorchTrack = null;
+    let consecutiveAlignedFrames = 0;
+    let isProcessingOMR = false;
 
+    // Performans için kalıcı gizli canvas
     const persistentCanvas = document.createElement("canvas");
     const persistentCtx = persistentCanvas.getContext("2d");
 
@@ -738,6 +881,21 @@
       document.getElementById("scanErrorBanner").style.display = "none";
     }
 
+    // 4 Köşe Kılavuz Göstergelerini Canlı Güncelleme
+    function updateGuideCornerUI(corner, isOk) {
+      const gb = document.getElementById(`gb-${corner}`);
+      const dot = document.getElementById(`dot-${corner}`);
+      if (gb) {
+        if (isOk) gb.classList.add("locked");
+        else gb.classList.remove("locked");
+      }
+      if (dot) {
+        if (isOk) dot.classList.add("ok");
+        else dot.classList.remove("ok");
+      }
+    }
+
+    // Listeden Hızlı Öğrenci Seçimi
     function handleQuickStudentSelect(sNo) {
       if (!sNo) {
         resetWizard();
@@ -756,18 +914,25 @@
 
       currentStep = 2;
       hideScanError();
+      consecutiveAlignedFrames = 0;
+      isProcessingOMR = false;
 
       const banner = document.getElementById("detectedStudentBanner");
       banner.style.display = "block";
       banner.innerHTML = `✅ Aktif Talebe: <strong>[${sNo}] ${student.name}</strong> (${student.class}) | Sınav: ${activeExamData.exam}`;
 
       document.getElementById("qr-guide").style.display = "none";
-      document.getElementById("omr-guide").style.display = "block";
+      const omrGuide = document.getElementById("omr-guide");
+      omrGuide.style.display = "block";
+      omrGuide.classList.remove("aligned");
       document.getElementById("manualScanBtn").style.display = "inline-flex";
+
+      const statusTextEl = document.getElementById("guideStatusText");
+      if (statusTextEl) statusTextEl.innerText = "📐 4 Köşeyi Hizalayın";
 
       document.getElementById("scanStatus").innerHTML = `
         👤 <strong>${student.name}</strong> seçildi.<br>
-        📱 Şimdi A4 kağıdını yeşil çerçeveye oturtun ve aşağıdaki <strong>"📸 Optik Formu Çek ve Oku"</strong> butonuna basın.
+        📱 Kağıdın 4 köşesindeki <strong>L çizgilerini</strong> ekrandaki sarı köşelere oturtun. <strong>4 köşe kilitlendiğinde sistem otomatik okuyacaktır!</strong>
       `;
     }
 
@@ -793,7 +958,7 @@
         }
         
         resetWizard();
-        scanInterval = setInterval(autoDetectionLoop, 180);
+        scanInterval = setInterval(autoDetectionLoop, 150);
         document.getElementById("startBtn").style.display = "none";
       } catch (err) {
         status.innerText = "❌ Kamera erişim hatası: " + err.message;
@@ -806,7 +971,9 @@
         const settings = currentTorchTrack.getSettings();
         const currentTorch = settings.torch || false;
         await currentTorchTrack.applyConstraints({ advanced: [{ torch: !currentTorch }] });
-      } catch (e) {}
+      } catch (e) {
+        console.warn("Flaş değiştirilemedi:", e);
+      }
     }
 
     function stopScanner() {
@@ -827,12 +994,25 @@
     function resetWizard() {
       currentStep = 1;
       activeExamData = null;
+      consecutiveAlignedFrames = 0;
+      isProcessingOMR = false;
       hideScanError();
+
+      updateGuideCornerUI("tl", false);
+      updateGuideCornerUI("tr", false);
+      updateGuideCornerUI("bl", false);
+      updateGuideCornerUI("br", false);
 
       document.getElementById("quickStudentSelect").value = "";
       document.getElementById("detectedStudentBanner").style.display = "none";
       document.getElementById("qr-guide").style.display = "flex";
-      document.getElementById("omr-guide").style.display = "none";
+      
+      const omrGuide = document.getElementById("omr-guide");
+      omrGuide.style.display = "none";
+      omrGuide.classList.remove("aligned");
+
+      const statusTextEl = document.getElementById("guideStatusText");
+      if (statusTextEl) statusTextEl.innerText = "📐 4 Köşeyi Hizalayın";
 
       document.getElementById("manualScanBtn").style.display = "none";
       document.getElementById("scanResultArea").style.display = "none";
@@ -840,6 +1020,7 @@
       document.getElementById("scanStatus").innerHTML = "Formun sağ üst köşesindeki <strong>karekodu</strong> mavi alana tutun veya yukarıdan <strong>talebeyi seçin</strong>.";
     }
 
+    // ================= CANLI TESPİT DÖNGÜSÜ (KAREKOD + 4 KÖŞE OTOMATİK OMR KİLİTLEME) =================
     function autoDetectionLoop() {
       const video = document.getElementById("video");
       if (video.readyState !== video.HAVE_ENOUGH_DATA) return;
@@ -850,6 +1031,7 @@
       }
       persistentCtx.drawImage(video, 0, 0, persistentCanvas.width, persistentCanvas.height);
 
+      // 1. AŞAMA: KAREKOD TESPİTİ
       if (currentStep === 1) {
         const imgData = persistentCtx.getImageData(0, 0, persistentCanvas.width, persistentCanvas.height);
         const code = jsQR(imgData.data, imgData.width, imgData.height);
@@ -867,7 +1049,9 @@
           playBeep('qr');
           if (navigator.vibrate) navigator.vibrate(120);
 
-          currentStep = 2;
+          currentStep = 2; // 2. Aşamaya geçildi: A4 Hizalama & Otomatik Okuma
+          consecutiveAlignedFrames = 0;
+          isProcessingOMR = false;
 
           document.getElementById("quickStudentSelect").value = activeExamData.sNo;
           const banner = document.getElementById("detectedStudentBanner");
@@ -875,17 +1059,126 @@
           banner.innerHTML = `✅ Karekod Okundu: <strong>[${activeExamData.sNo}] ${student.name}</strong> (${student.class}) | Sınav: ${activeExamData.exam}`;
 
           document.getElementById("qr-guide").style.display = "none";
-          document.getElementById("omr-guide").style.display = "block";
+          const omrGuide = document.getElementById("omr-guide");
+          omrGuide.style.display = "block";
+          omrGuide.classList.remove("aligned");
           document.getElementById("manualScanBtn").style.display = "inline-flex";
+
+          const statusTextEl = document.getElementById("guideStatusText");
+          if (statusTextEl) statusTextEl.innerText = "📐 4 Köşeyi Hizalayın";
 
           document.getElementById("scanStatus").innerHTML = `
             <span style="color: #15803d; font-size: 14.5px;">✅ <strong>${student.name}</strong> tanındı!</span><br>
-            📱 Şimdi telefonu 30-40 cm geriye tutarak A4 formunu yeşil çerçeveye oturtun ve aşağıdaki <strong>"📸 Optik Formu Çek ve Oku"</strong> butonuna basın.
+            📱 Formun 4 köşesindeki <strong>L çizgilerini</strong> ekrandaki köşelere oturtun. <strong>Hizalandığında tuşa basmadan otomatik okuyacaktır!</strong>
           `;
+        }
+      }
+
+      // 2. AŞAMA: 4 KÖŞE L-BRAKET HİZALAMA VE OTOMATİK OKUMA
+      else if (currentStep === 2) {
+        if (isProcessingOMR) return;
+
+        const videoEl = document.getElementById("video");
+        const omrGuide = document.getElementById("omr-guide");
+        const vRect = videoEl.getBoundingClientRect();
+        const gRect = omrGuide.getBoundingClientRect();
+
+        if (vRect.width === 0 || gRect.width === 0) return;
+
+        const rx = Math.max(0, (gRect.left - vRect.left) / vRect.width);
+        const ry = Math.max(0, (gRect.top - vRect.top) / vRect.height);
+        const rw = Math.min(1 - rx, gRect.width / vRect.width);
+        const rh = Math.min(1 - ry, gRect.height / vRect.height);
+
+        const sheetX = Math.round(rx * persistentCanvas.width);
+        const sheetY = Math.round(ry * persistentCanvas.height);
+        const sheetW = Math.round(rw * persistentCanvas.width);
+        const sheetH = Math.round(rh * persistentCanvas.height);
+
+        const cW = persistentCanvas.width;
+        const cH = persistentCanvas.height;
+        const imgData = persistentCtx.getImageData(0, 0, cW, cH);
+        const data = imgData.data;
+
+        // Köşe arama penceresi boyutu
+        const roiSize = Math.max(16, Math.floor(sheetW * 0.08));
+
+        function checkCornerBracket(cx, cy) {
+          let minB = 255, maxB = 0, count = 0;
+          let darkCount = 0, whiteCount = 0;
+
+          const x0 = Math.max(0, Math.floor(cx - roiSize / 2));
+          const x1 = Math.min(cW - 1, Math.floor(cx + roiSize / 2));
+          const y0 = Math.max(0, Math.floor(cy - roiSize / 2));
+          const y1 = Math.min(cH - 1, Math.floor(cy + roiSize / 2));
+
+          for (let y = y0; y <= y1; y += 2) {
+            for (let x = x0; x <= x1; x += 2) {
+              const idx = (y * cW + x) * 4;
+              const br = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+              count++;
+              if (br < minB) minB = br;
+              if (br > maxB) maxB = br;
+              if (br < 95) darkCount++;
+              if (br > 135) whiteCount++;
+            }
+          }
+
+          if (count === 0) return false;
+          const contrast = maxB - minB;
+          const darkRatio = darkCount / count;
+          const whiteRatio = whiteCount / count;
+
+          // Sağlam L-Bracket Tespiti:
+          // Siyah çizgi piksel oranı %4 - %65 arası + Beyaz kağıt piksel oranı en az %15 + Kontrast >= 40
+          return (contrast >= 40 && darkRatio >= 0.04 && darkRatio <= 0.65 && (whiteRatio >= 0.15 || maxB >= 135));
+        }
+
+        const isTL = checkCornerBracket(sheetX, sheetY);
+        const isTR = checkCornerBracket(sheetX + sheetW, sheetY);
+        const isBL = checkCornerBracket(sheetX, sheetY + sheetH);
+        const isBR = checkCornerBracket(sheetX + sheetW, sheetY + sheetH);
+
+        updateGuideCornerUI("tl", isTL);
+        updateGuideCornerUI("tr", isTR);
+        updateGuideCornerUI("bl", isBL);
+        updateGuideCornerUI("br", isBR);
+
+        const alignedCount = (isTL ? 1 : 0) + (isTR ? 1 : 0) + (isBL ? 1 : 0) + (isBR ? 1 : 0);
+        const statusTextEl = document.getElementById("guideStatusText");
+
+        if (alignedCount === 4) {
+          consecutiveAlignedFrames++;
+          omrGuide.classList.add("aligned");
+          if (statusTextEl) statusTextEl.innerHTML = `🎯 4/4 Kilitlendi! Sabit Tutun (${consecutiveAlignedFrames}/2)...`;
+
+          // 2 ardışık kare (~300ms) sabit tutulduğunda TUŞA BASMAYA GEREK KALMADAN OTOMATİK OKU!
+          if (consecutiveAlignedFrames >= 2) {
+            isProcessingOMR = true;
+            playBeep('lock');
+            if (navigator.vibrate) navigator.vibrate(80);
+            if (statusTextEl) statusTextEl.innerHTML = `⚡ <strong>OTOMATİK OKUNUYOR...</strong>`;
+            
+            const captureCanvas = document.createElement("canvas");
+            captureCanvas.width = persistentCanvas.width;
+            captureCanvas.height = persistentCanvas.height;
+            captureCanvas.getContext("2d").drawImage(persistentCanvas, 0, 0);
+
+            setTimeout(() => {
+              processOMRCanvas(captureCanvas, false);
+              consecutiveAlignedFrames = 0;
+              isProcessingOMR = false;
+            }, 60);
+          }
+        } else {
+          consecutiveAlignedFrames = 0;
+          omrGuide.classList.remove("aligned");
+          if (statusTextEl) statusTextEl.innerText = `📐 Hizalama: ${alignedCount}/4 Köşe Oturdu`;
         }
       }
     }
 
+    // Kullanıcı Dilerse Manuel Olarak da Basabilir
     function triggerManualOMRScan() {
       if (!activeExamData) {
         alert("Lütfen önce yukarıdaki menüden öğrenci seçin veya optik formdaki karekodu okutun!");
@@ -906,6 +1199,7 @@
       processOMRCanvas(captureCanvas, false);
     }
 
+    // Dosyadan / Galeriden Fotoğraf Seçildiğinde Tetiklenir
     function handleFileUpload(event) {
       if (!activeExamData) {
         alert("Lütfen önce yukarıdaki menüden bir talebe seçin!");
@@ -930,9 +1224,10 @@
       reader.readAsDataURL(file);
     }
 
+    // ================= SİYAH-BEYAZ ZEBRA DOĞRULAMALI VE HASSAS OMR ANALİZİ =================
     function processOMRCanvas(canvas, isFullImage) {
       hideScanError();
-      document.getElementById("scanStatus").innerHTML = `⚡ <strong>Optik form taranıyor ve doğrulanıyor...</strong>`;
+      document.getElementById("scanStatus").innerHTML = `⚡ <strong>Optik form taranıyor ve analiz ediliyor...</strong>`;
 
       const vW = canvas.width;
       const vH = canvas.height;
@@ -959,7 +1254,7 @@
         sheetH = Math.round(rh * vH);
       }
 
-      // FORM DOĞRULAMA (KAĞIT GERÇEKTEN ORADA MI?)
+      // 1. ADIM: FORM DOĞRULAMA (KAĞIT KADRAJA OTURDU MU?)
       let sampleSum = 0, sampleCount = 0;
       let minBr = 255, maxBr = 0;
 
@@ -982,18 +1277,19 @@
       const contrast = maxBr - minBr;
 
       if (avgPaperBrightness < 75 || contrast < 35) {
-        showScanError("❌ <strong>Optik form tespit edilemedi!</strong><br>Kameranız optik kağıda bakmıyor veya ortam çok karanlık.<br>Lütfen optik kağıdın tamamını ışıklı bir ortamda yeşil çerçeveye oturtup tekrar <strong>'Optik Formu Çek ve Oku'</strong> butonuna basın.");
-        document.getElementById("scanStatus").innerHTML = `<span style="color:#dc2626;">⚠️ Hata: Kadrajda geçerli bir optik form bulunamadı.</span>`;
+        showScanError("❌ <strong>Optik form tespit edilemedi!</strong><br>Kameranız kağıda bakmıyor veya ortam çok karanlık.<br>Lütfen 4 köşeyi çerçeveye oturtup tekrar deneyin.");
+        document.getElementById("scanStatus").innerHTML = `<span style="color:#dc2626;">⚠️ Hata: Geçerli bir optik form bulunamadı.</span>`;
         return;
       }
 
-      // 50 SORULUK HASSAS OMR ANALİZİ
-      const gridTopPercent = 0.228;
-      const gridBottomPercent = 0.838;
-      const col1StartPercent = 0.076;
+      // 2. ADIM: 50 SORULUK ZEBRA UYUMLU GEOMETRİK ANALİZ
+      // L-bracket çerçevesine göre CEVAP FORMU tablosunun kesin koordinat oranları
+      const gridTopPercent = 0.224;
+      const gridBottomPercent = 0.912;
+      const col1StartPercent = 0.055;
       const col1EndPercent = 0.492;
       const col2StartPercent = 0.508;
-      const col2EndPercent = 0.924;
+      const col2EndPercent = 0.945;
 
       const totalRows = 25;
       const options = ["A", "B", "C", "D", "E"];
@@ -1001,6 +1297,7 @@
       let detectedMarksInfo = [];
 
       const bubbleRadius = Math.max(5, Math.floor(sheetH * 0.0075));
+      const innerRadius = Math.max(3, Math.floor(bubbleRadius * 0.65)); // Dış siyah çerçeveyi hariç tutan iç çekirdek
 
       for (let q = 1; q <= 50; q++) {
         const isCol2 = q > 25;
@@ -1018,10 +1315,11 @@
         const bubblesEndX = colStartX + colWidth * 0.96;
         const bubbleStepX = (bubblesEndX - bubblesStartX) / 5;
 
-        let paperRefBr = 220, rCount = 0, rSum = 0;
-        const refX = colStartX + colWidth * 0.12;
-        for (let dy = -bubbleRadius; dy <= bubbleRadius; dy += 2) {
-          for (let dx = -bubbleRadius; dx <= bubbleRadius; dx += 2) {
+        // O SATIRIN YEREL ZEMİN AYDINLIĞI (Zebra şeritli satır tonu tespiti)
+        let paperRefBr = 225, rCount = 0, rSum = 0;
+        const refX = colStartX + colWidth * 0.17;
+        for (let dy = -2; dy <= 2; dy++) {
+          for (let dx = -2; dx <= 2; dx++) {
             const px = Math.round(refX + dx);
             const py = Math.round(curY + dy);
             if (px >= 0 && px < vW && py >= 0 && py < vH) {
@@ -1033,7 +1331,9 @@
         }
         if (rCount > 0) paperRefBr = rSum / rCount;
 
+        // 5 Baloncuğu analiz et (Hem ortalama koyuluk hem de iç doluluk oranı)
         let bubbleScores = [];
+        let bubbleFillRatios = [];
         let bubbleCenters = [];
 
         options.forEach((opt, optIdx) => {
@@ -1042,42 +1342,58 @@
           bubbleCenters.push({ x: bCenterX, y: bCenterY });
 
           let bSum = 0, bCount = 0;
-          for (let dy = -bubbleRadius; dy <= bubbleRadius; dy += 2) {
-            for (let dx = -bubbleRadius; dx <= bubbleRadius; dx += 2) {
-              if (dx*dx + dy*dy <= bubbleRadius*bubbleRadius) {
+          let darkPixelCount = 0;
+
+          for (let dy = -innerRadius; dy <= innerRadius; dy++) {
+            for (let dx = -innerRadius; dx <= innerRadius; dx++) {
+              if (dx*dx + dy*dy <= innerRadius*innerRadius) {
                 const px = Math.round(bCenterX + dx);
                 const py = Math.round(bCenterY + dy);
                 if (px >= 0 && px < vW && py >= 0 && py < vH) {
                   const idx = (py * vW + px) * 4;
-                  bSum += (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                  const br = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                  bSum += br;
                   bCount++;
+                  // Belirgin kalem izi koyuluğu
+                  if (br < paperRefBr - 26) {
+                    darkPixelCount++;
+                  }
                 }
               }
             }
           }
           const avgBr = bCount > 0 ? (bSum / bCount) : 255;
           const darkness = Math.max(0, paperRefBr - avgBr);
+          const fillRatio = bCount > 0 ? (darkPixelCount / bCount) : 0;
+
           bubbleScores.push(darkness);
+          bubbleFillRatios.push(fillRatio);
         });
 
-        let maxDark = 0, bestOptIdx = -1, secondMaxDark = 0;
+        let maxDark = 0, bestOptIdx = -1, secondMaxDark = 0, secondOptIdx = -1;
         bubbleScores.forEach((d, idx) => {
           if (d > maxDark) {
             secondMaxDark = maxDark;
+            secondOptIdx = bestOptIdx;
             maxDark = d;
             bestOptIdx = idx;
           } else if (d > secondMaxDark) {
             secondMaxDark = d;
+            secondOptIdx = idx;
           }
         });
 
-        const FILL_THRESHOLD = 28;
+        const bestFillRatio = bestOptIdx >= 0 ? bubbleFillRatios[bestOptIdx] : 0;
+        const secondFillRatio = secondOptIdx >= 0 ? bubbleFillRatios[secondOptIdx] : 0;
+
         let chosenAnswer = "-";
 
-        if (maxDark < FILL_THRESHOLD) {
-          chosenAnswer = "-";
-        } else if (secondMaxDark > FILL_THRESHOLD && (maxDark - secondMaxDark) < 10) {
-          chosenAnswer = "*";
+        // Boş baloncukta sadece harf çizgisi bulunur (fillRatio < 0.20, maxDark < 22).
+        // Karalanmış baloncukta fillRatio >= 0.22 ve maxDark >= 22.
+        if (maxDark < 22 || bestFillRatio < 0.22) {
+          chosenAnswer = "-"; // BOŞ
+        } else if (secondMaxDark >= 22 && (maxDark - secondMaxDark) < 10 && secondFillRatio >= 0.22) {
+          chosenAnswer = "*"; // ÇİFT İŞARETLİ
         } else {
           chosenAnswer = options[bestOptIdx];
         }
@@ -1095,21 +1411,27 @@
       playBeep('omr');
       if (navigator.vibrate) navigator.vibrate([100, 60, 100]);
 
+      // 3. ADIM: GÖRSEL KANIT TUVALİNİ ÇİZ
       drawInspectionCanvas(canvas, detectedMarksInfo);
+
+      // 4. ADIM: SONUÇLARI DEĞERLENDİR VE GÖSTER
       renderEvaluationResults();
     }
 
+    // Çekilen Fotoğrafın Üzerine Okunan Şıkları Çizen Görsel Denetim Motoru
     function drawInspectionCanvas(sourceCanvas, marksInfo) {
       const inspectCanvas = document.getElementById("inspectionCanvas");
       inspectCanvas.width = sourceCanvas.width;
       inspectCanvas.height = sourceCanvas.height;
       const ctx = inspectCanvas.getContext("2d");
 
+      // Orijinal fotoğrafı çiz
       ctx.drawImage(sourceCanvas, 0, 0);
 
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
 
+      // Her sorunun tespit edilen baloncuklarını işaretle
       marksInfo.forEach((item, idx) => {
         const correctKey = masterKey[idx] || "X";
         const options = ["A", "B", "C", "D", "E"];
@@ -1122,20 +1444,22 @@
           ctx.arc(pt.x, pt.y, item.radius + 3, 0, 2 * Math.PI);
 
           if (item.ans === opt) {
+            // Talebenin işaretlediği şık
             if (opt === correctKey) {
-              ctx.strokeStyle = "#16a34a";
+              ctx.strokeStyle = "#16a34a"; // Doğru: Yeşil
               ctx.fillStyle = "rgba(34, 197, 94, 0.4)";
               ctx.lineWidth = 3;
               ctx.fill();
               ctx.stroke();
             } else {
-              ctx.strokeStyle = "#dc2626";
+              ctx.strokeStyle = "#dc2626"; // Yanlış: Kırmızı
               ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
               ctx.lineWidth = 3;
               ctx.fill();
               ctx.stroke();
             }
           } else if (opt === correctKey && item.ans !== "-") {
+            // Yanlış yaptığında doğru şıkkı yeşil kesik çizgiyle göster
             ctx.strokeStyle = "#16a34a";
             ctx.lineWidth = 2;
             ctx.setLineDash([3, 3]);
@@ -1148,6 +1472,7 @@
       document.getElementById("inspectionArea").style.display = "block";
     }
 
+    // ================= DEĞERLENDİRME & PUANLAMA MOTORU =================
     function renderEvaluationResults() {
       const lvl = activeExamData.lvl;
       const masterKey = activeExamData.masterKey;
@@ -1168,7 +1493,7 @@
           const correctChoice = masterKey[qPointer] || "X";
           const qNum = qPointer + 1;
 
-          let status = "blank";
+          let status = "blank"; // 'correct', 'wrong', 'blank'
 
           if (ans === "-" || ans === " " || correctChoice === "X") {
             bB++; totalB++;
@@ -1178,6 +1503,7 @@
             totalWeightedNetPoints += l.weight;
             status = "correct";
           } else {
+            // Yanlış veya Çift işaretleme
             bY++; totalY++;
             totalWeightedNetPoints -= (l.weight / 4);
             status = "wrong";
@@ -1203,8 +1529,10 @@
       branchReportHtml += "</div>";
 
       const totalNet = totalD - (totalY / 4);
+      // 100 taban puanlı 500'lük sistem
       const finalScore = Math.max(100, Math.min(500, 100 + totalWeightedNetPoints));
 
+      // Kart Alanını Güncelle
       document.getElementById("scanResultArea").style.display = "block";
       document.getElementById("studentIdentity").innerText = `Talebe: [${activeExamData.sNo}] ${student.name} (${student.class}) | Sınav: ${activeExamData.exam}`;
       
@@ -1215,6 +1543,8 @@
       document.getElementById("resScore").innerText = finalScore.toFixed(2);
 
       document.getElementById("branchBreakdown").innerHTML = branchReportHtml;
+
+      // 50 Soruluk İnteraktif Matris Tablosu
       renderInteractiveMatrix(questionStatusList);
 
       document.getElementById("scanStatus").innerHTML = `
@@ -1222,6 +1552,7 @@
         Aşağıdaki sonuçları inceleyebilir, gerekirse şıkları düzenleyip E-Tabloya kaydedebilirsiniz.
       `;
 
+      // Otomatik E-Tabloya İletim
       submitToSheetCurrent();
     }
 
@@ -1263,6 +1594,7 @@
       renderEvaluationResults();
     }
 
+    // ================= GOOGLE E-TABLO ENTEGRASYONU =================
     function submitToSheetCurrent() {
       if (!activeExamData) return;
 
@@ -1329,6 +1661,7 @@
       });
     }
 
+    // Sayfa Yüklendiğinde Başlat
     window.onload = () => {
       const saved = localStorage.getItem("kas_saved_keys");
       if (saved) {
@@ -1340,3 +1673,4 @@
   </script>
 </body>
 </html>
+  
